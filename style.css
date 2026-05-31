@@ -755,42 +755,70 @@ body {
 #draft-cards::-webkit-scrollbar-thumb { background: rgba(200,160,60,.28); border-radius: 2px; }
 
 .draft-card {
-  width: 132px; background: rgba(255,255,255,.04);
-  border: 1.5px solid rgba(200,160,60,.22); border-radius: 10px;
+  width: 132px;
+  background: linear-gradient(160deg, #2e2412 0%, #1e1608 100%);
+  border: 2px solid rgba(200,160,60,.50);
+  border-radius: 10px;
   padding: 13px 11px; cursor: pointer;
   display: flex; flex-direction: column; gap: 6px; align-items: center;
-  transition: border-color .15s, transform .12s, background .15s, box-shadow .15s;
+  transition: all .18s cubic-bezier(.25,.8,.25,1);
+  box-shadow: 0 3px 14px rgba(0,0,0,.50), inset 0 1px 0 rgba(200,160,60,.12);
+  position: relative; overflow: hidden;
+}
+/* Top gold accent line on each card */
+.draft-card::before {
+  content: '';
+  position: absolute; top: 0; left: 15%; right: 15%; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(200,160,60,.70), transparent);
 }
 .draft-card:hover {
-  border-color: var(--gold-bright); transform: translateY(-5px);
-  background: rgba(200,160,40,.10);
-  box-shadow: 0 8px 24px rgba(200,160,40,.25);
+  border-color: var(--gold-bright);
+  transform: translateY(-7px) scale(1.02);
+  background: linear-gradient(160deg, #3c2e14 0%, #2a1e0a 100%);
+  box-shadow: 0 14px 32px rgba(0,0,0,.60), 0 0 0 1px rgba(224,180,40,.40),
+              inset 0 1px 0 rgba(255,220,80,.18);
 }
 .draft-card-name { font-size: 13px; font-weight: 700; color: var(--gold-bright); text-align: center; line-height: 1.3; font-family: 'Noto Serif JP', serif; }
 .draft-card-cost { display: flex; gap: 3px; flex-wrap: wrap; justify-content: center; }
 .draft-card-effect { font-size: 10px; color: var(--text-dim); text-align: center; line-height: 1.5; }
 
-/* ── Draft hint panel ── */
-#draft-hint { flex-shrink: 0; }
-.draft-hint-box {
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(200,160,60,.18);
-  border-radius: 10px;
-  padding: 11px 14px;
-  display: flex; flex-direction: column; gap: 8px;
+/* ── Separator between cards and hint ── */
+#draft-hint {
+  flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 0;
 }
-.dh-section { display: flex; flex-direction: column; gap: 4px; }
+.dh-sep {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0 4px;
+  font-family: 'Cinzel', serif; font-size: 8px;
+  color: rgba(80,120,200,.55); letter-spacing: 2px; text-transform: uppercase;
+}
+.dh-sep::before, .dh-sep::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(60,90,180,.22), transparent);
+}
+
+/* ── Hint panel — info/note style ── */
+.draft-hint-box {
+  background: rgba(8,12,28,.80);
+  border: 1px solid rgba(55,85,160,.25);
+  border-left: 3px solid rgba(78,120,220,.45);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px 8px 11px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.dh-section { display: flex; flex-direction: column; gap: 3px; }
 .dh-heading {
-  font-size: 10.5px; font-weight: 700;
-  color: rgba(220,185,100,.80);
-  font-family: 'Cinzel', serif; letter-spacing: .5px;
+  font-size: 9px; font-weight: 700;
+  color: rgba(100,155,240,.75);
+  font-family: 'Cinzel', serif; letter-spacing: .8px; text-transform: uppercase;
 }
 .dh-text {
-  font-size: 10.5px; color: var(--text-dim); line-height: 1.65;
+  font-size: 9.5px; color: rgba(150,170,210,.65); line-height: 1.60;
   font-family: 'Noto Serif JP', serif;
 }
-.dh-text strong { color: var(--text); }
-.dh-divider { height: 1px; background: rgba(200,160,60,.12); }
+.dh-text strong { color: rgba(200,215,240,.85); }
+.dh-divider { height: 1px; background: rgba(55,85,160,.18); }
 .dh-order-row { display: flex; flex-direction: column; gap: 5px; }
 .dh-order {
   display: flex; align-items: center; gap: 4px;

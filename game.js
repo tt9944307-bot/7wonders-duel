@@ -157,6 +157,7 @@ function getDraftHintHTML(pick) {
     : '4枚のワンダーから選びます。全員が選び終わったら新セットへ。';
 
   return `
+<div class="dh-sep"><span>ゲームの説明</span></div>
 <div class="draft-hint-box">
   <div class="dh-section">
     <div class="dh-heading">🏛 ワンダーとは？</div>
