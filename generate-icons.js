@@ -1,9 +1,12 @@
 /**
- * generate-icons.js
- * Generates PNG icons for the 7 Wonders Duel PWA
- * Uses only Node.js built-ins (zlib, fs) — no external packages needed
+ * generate-icons.js  —  7 Wonders Duel PWA icon generator
+ * Uses only Node.js built-ins (zlib, fs). Run: node generate-icons.js
  *
- * Run: node generate-icons.js
+ * Design: full-width pyramid of cards (lobby SVG compressed into square icon)
+ *   Bottom: 5 colored cards (orange-brown, blue, green, red, purple)
+ *   Middle: 4 face-down dark cards
+ *   Top:    2 face-down darkest cards
+ *   "7" numeral above, gold glow bar below, warm background glow
  */
 'use strict';
 const zlib = require('zlib');
@@ -20,197 +23,206 @@ const CRC_TABLE = (() => {
   }
   return t;
 })();
-
 function crc32(buf) {
   let c = 0xFFFFFFFF;
   for (let i = 0; i < buf.length; i++) c = CRC_TABLE[(c ^ buf[i]) & 0xFF] ^ (c >>> 8);
   return (c ^ 0xFFFFFFFF) >>> 0;
 }
 
-// ── PNG builder ────────────────────────────────────────────────────
 function makeChunk(type, data) {
-  const len = Buffer.alloc(4);
-  len.writeUInt32BE(data.length);
-  const typeBuf = Buffer.from(type, 'ascii');
-  const crcInput = Buffer.concat([typeBuf, data]);
+  const len = Buffer.alloc(4); len.writeUInt32BE(data.length);
+  const t = Buffer.from(type, 'ascii');
   const crcBuf = Buffer.alloc(4);
-  crcBuf.writeUInt32BE(crc32(crcInput));
-  return Buffer.concat([len, typeBuf, data, crcBuf]);
+  crcBuf.writeUInt32BE(crc32(Buffer.concat([t, data])));
+  return Buffer.concat([len, t, data, crcBuf]);
 }
 
-function encodePNG(width, height, rgba) {
-  // Build raw rows: filter byte (0) + RGBA per pixel
-  const row = 1 + width * 4;
-  const raw = Buffer.alloc(height * row);
-  for (let y = 0; y < height; y++) {
-    raw[y * row] = 0; // filter: None
-    rgba.copy(raw, y * row + 1, y * width * 4, (y + 1) * width * 4);
+function encodePNG(W, H, rgba) {
+  const row = 1 + W * 4;
+  const raw = Buffer.alloc(H * row);
+  for (let y = 0; y < H; y++) {
+    raw[y * row] = 0;
+    rgba.copy(raw, y * row + 1, y * W * 4, (y+1) * W * 4);
   }
-  const compressed = zlib.deflateSync(raw, { level: 9 });
-
+  const comp = zlib.deflateSync(raw, { level: 9 });
   const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(width, 0);
-  ihdr.writeUInt32BE(height, 4);
-  ihdr[8] = 8; ihdr[9] = 6; // 8-bit RGBA
-
+  ihdr.writeUInt32BE(W, 0); ihdr.writeUInt32BE(H, 4);
+  ihdr[8]=8; ihdr[9]=6;
   return Buffer.concat([
-    Buffer.from([0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A]), // signature
+    Buffer.from([0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A]),
     makeChunk('IHDR', ihdr),
-    makeChunk('IDAT', compressed),
+    makeChunk('IDAT', comp),
     makeChunk('IEND', Buffer.alloc(0)),
   ]);
 }
 
-// ── Drawing helpers ────────────────────────────────────────────────
-function createCanvas(W, H) {
+// ── Canvas helpers ────────────────────────────────────────────────
+function makeCanvas(W, H) {
   const buf = Buffer.alloc(W * H * 4, 0);
 
-  function px(x, y, r, g, b, a = 255) {
-    x = Math.round(x); y = Math.round(y);
-    if (x < 0 || x >= W || y < 0 || y >= H) return;
-    const i = (y * W + x) * 4;
-    // alpha blend over existing
-    const srcA = a / 255, dstA = buf[i+3] / 255;
-    const outA = srcA + dstA * (1 - srcA);
-    if (outA < 0.001) return;
-    buf[i]   = Math.round((r * srcA + buf[i]   * dstA * (1-srcA)) / outA);
-    buf[i+1] = Math.round((g * srcA + buf[i+1] * dstA * (1-srcA)) / outA);
-    buf[i+2] = Math.round((b * srcA + buf[i+2] * dstA * (1-srcA)) / outA);
-    buf[i+3] = Math.round(outA * 255);
+  function blend(i, r, g, b, a) {
+    const sa = a / 255, da = buf[i+3] / 255;
+    const oa = sa + da * (1 - sa);
+    if (oa < 0.001) return;
+    buf[i]   = ((r * sa + buf[i]   * da * (1-sa)) / oa) | 0;
+    buf[i+1] = ((g * sa + buf[i+1] * da * (1-sa)) / oa) | 0;
+    buf[i+2] = ((b * sa + buf[i+2] * da * (1-sa)) / oa) | 0;
+    buf[i+3] = (oa * 255) | 0;
   }
 
-  function fillRect(x, y, w, h, r, g, b, a = 255) {
-    for (let dy = 0; dy < h; dy++)
-      for (let dx = 0; dx < w; dx++)
-        px(x+dx, y+dy, r, g, b, a);
+  function px(x, y, r, g, b, a=255) {
+    x=x|0; y=y|0;
+    if (x<0||x>=W||y<0||y>=H) return;
+    blend((y*W+x)*4, r, g, b, a);
   }
 
-  function fillRounded(x, y, w, h, rad, r, g, b, a = 255) {
-    for (let dy = 0; dy < h; dy++) {
-      for (let dx = 0; dx < w; dx++) {
-        const cx = dx < rad ? rad : (dx >= w-rad ? w-rad-1 : dx);
-        const cy = dy < rad ? rad : (dy >= h-rad ? h-rad-1 : dy);
-        const dx2 = dx - cx, dy2 = dy - cy;
-        if (dx < rad && dy < rad && Math.sqrt(dx2*dx2+dy2*dy2) > rad) continue;
-        if (dx >= w-rad && dy < rad && Math.sqrt(dx2*dx2+dy2*dy2) > rad) continue;
-        if (dx < rad && dy >= h-rad && Math.sqrt(dx2*dx2+dy2*dy2) > rad) continue;
-        if (dx >= w-rad && dy >= h-rad && Math.sqrt(dx2*dx2+dy2*dy2) > rad) continue;
-        px(x+dx, y+dy, r, g, b, a);
+  function fillRect(x, y, w, h, r, g, b, a=255) {
+    const x1=Math.max(0,x|0), y1=Math.max(0,y|0);
+    const x2=Math.min(W,x1+(w|0)), y2=Math.min(H,y1+(h|0));
+    for (let py=y1; py<y2; py++)
+      for (let px2=x1; px2<x2; px2++)
+        blend((py*W+px2)*4, r, g, b, a);
+  }
+
+  function fillRounded(x, y, w, h, rad, r, g, b, a=255) {
+    const x0=x|0, y0=y|0, x1=x0+(w|0), y1=y0+(h|0);
+    const rx=Math.min(rad, w/2, h/2);
+    for (let py=y0; py<y1; py++) {
+      for (let px2=x0; px2<x1; px2++) {
+        const dx = px2-x0, dy = py-y0;
+        let inside = true;
+        if (dx<rx && dy<rx && Math.hypot(dx-rx, dy-rx)>rx) inside=false;
+        else if (dx>=w-rx && dy<rx && Math.hypot(dx-(w-rx), dy-rx)>rx) inside=false;
+        else if (dx<rx && dy>=h-rx && Math.hypot(dx-rx, dy-(h-rx))>rx) inside=false;
+        else if (dx>=w-rx && dy>=h-rx && Math.hypot(dx-(w-rx), dy-(h-rx))>rx) inside=false;
+        if (inside) blend((py*W+px2)*4, r, g, b, a);
       }
     }
   }
 
-  // Thick line (Bresenham + width)
-  function line(x0, y0, x1, y1, thick, r, g, b, a=255) {
-    const dx = x1-x0, dy = y1-y0, len = Math.sqrt(dx*dx+dy*dy);
-    const nx = -dy/len, ny = dx/len; // normal
-    const steps = Math.ceil(len * 1.5);
-    for (let s = 0; s <= steps; s++) {
-      const t = s/steps;
-      const bx = x0 + t*dx, by = y0 + t*dy;
-      for (let d = -thick/2; d <= thick/2; d++) {
-        px(bx + nx*d, by + ny*d, r, g, b, a);
-      }
-    }
+  function hLine(x, y, w, r, g, b, a=255) {
+    fillRect(x, y, w, 1, r, g, b, a);
   }
 
-  // Radial glow (blended onto existing pixels)
   function radialGlow(cx, cy, maxR, r, g, b, maxA) {
-    const x0 = Math.max(0, Math.floor(cx-maxR));
-    const x1 = Math.min(W-1, Math.ceil(cx+maxR));
-    const y0 = Math.max(0, Math.floor(cy-maxR));
-    const y1 = Math.min(H-1, Math.ceil(cy+maxR));
-    for (let y = y0; y <= y1; y++) {
-      for (let x = x0; x <= x1; x++) {
-        const d = Math.sqrt((x-cx)**2+(y-cy)**2);
+    const bx=Math.max(0,(cx-maxR)|0), by=Math.max(0,(cy-maxR)|0);
+    const ex=Math.min(W,(cx+maxR+1)|0), ey=Math.min(H,(cy+maxR+1)|0);
+    for (let py=by; py<ey; py++) {
+      for (let px2=bx; px2<ex; px2++) {
+        const d = Math.hypot(px2-cx, py-cy);
         if (d >= maxR) continue;
         const t = 1 - d/maxR;
-        px(x, y, r, g, b, Math.round(t*t*maxA));
+        blend((py*W+px2)*4, r, g, b, Math.round(t*t*maxA));
       }
     }
   }
 
-  return { buf, px, fillRect, fillRounded, line, radialGlow,
-           toPNG: () => encodePNG(W, H, buf) };
-}
-
-// ── Icon drawing ───────────────────────────────────────────────────
-function drawIcon(size) {
-  const c = createCanvas(size, size);
-  const S = size / 512; // scale all coords
-
-  const s  = (v) => Math.round(v * S);
-  const { fillRect, fillRounded, line, radialGlow, px } = c;
-
-  // ─ Background (dark stone, fully opaque) ─
-  fillRounded(0, 0, size, size, s(88), 14, 10, 6);
-
-  // ─ Warm radial glow from bottom-center ─
-  radialGlow(size*0.5, size*0.72, size*0.58, 80, 52, 8, 100);
-
-  // ─ Card dimensions ─
-  const CW = s(68), CH = s(96), RX = s(7);
-
-  // Bottom row (3 face-up colored cards)
-  const by = s(300);
-  const bx = [s(132), s(218), s(304)];
-  const colors = [[180, 90, 40], [22, 88, 158], [20, 108, 54]];
-  const lights  = [[220,150,90],  [80,148,230],  [55,175,100]];
-  colors.forEach(([r,g,b], i) => {
-    fillRounded(bx[i], by, CW, CH, RX, r, g, b);
-    // Top highlight bar
-    fillRounded(bx[i], by, CW, s(18), RX, lights[i][0], lights[i][1], lights[i][2], 200);
-    // Two label lines
-    fillRect(bx[i]+s(8), by+s(28), s(32), s(6), 255, 255, 255, 90);
-    fillRect(bx[i]+s(8), by+s(40), s(22), s(5), 255, 255, 255, 60);
-    // Card border
-    for (let d = 0; d < 2; d++)
-      fillRounded(bx[i]+d, by+d, CW-d*2, CH-d*2, RX, 255, 255, 255, 30);
-  });
-
-  // Middle row (2 face-down dark cards)
-  const my = s(208);
-  const mx = [s(175), s(261)];
-  mx.forEach(x => {
-    fillRounded(x, my, CW, CH, RX, 13, 22, 40);
-    // Hatching lines (horizontal)
-    for (let n = 0; n < 5; n++)
-      fillRect(x+s(8), my+s(18+n*14), CW-s(16), s(5), 25, 45, 72, 120);
-    // Border
-    fillRounded(x, my, CW, CH, RX, 30, 55, 90, 120);
-  });
-
-  // Top card (apex, face-down)
-  const ty = s(116), tx = s(218);
-  fillRounded(tx, ty, CW, CH, RX, 10, 16, 32);
-  for (let n = 0; n < 5; n++)
-    fillRect(tx+s(8), ty+s(18+n*14), CW-s(16), s(5), 22, 38, 65, 110);
-  fillRounded(tx, ty, CW, CH, RX, 25, 45, 80, 100);
-
-  // ─ Gold accent line below pyramid ─
-  for (let x = 0; x < size; x++) {
-    const t = Math.sin(Math.PI * x / size);
-    const a = Math.round(t * 180);
-    if (a > 5) fillRect(x, s(410), 1, s(2), 224, 180, 40, a);
+  function thickLine(x0,y0,x1,y1,thick,r,g,b,a=255) {
+    const dx=x1-x0, dy=y1-y0, len=Math.hypot(dx,dy)||1;
+    const nx=-dy/len, ny=dx/len;
+    const steps=Math.ceil(len*2)+1;
+    for (let s=0;s<=steps;s++) {
+      const t=s/steps, bx2=x0+t*dx, by2=y0+t*dy;
+      for (let d=-thick/2;d<=thick/2;d++)
+        px(bx2+nx*d, by2+ny*d, r,g,b,a);
+    }
   }
 
-  // ─ "7" numeral (thick strokes) ─
-  // Position: top-center
-  const nx = s(196), ny = s(30), nw = s(120), nh = s(78), nT = s(16);
-  const gold = [224, 180, 40];
+  return { buf, px, fillRect, fillRounded, hLine, radialGlow, thickLine,
+           toPNG: ()=>encodePNG(W, H, buf) };
+}
 
-  // Top bar of "7"
-  fillRounded(nx, ny, nw, nT, s(4), ...gold);
+// ── Icon drawing ──────────────────────────────────────────────────
+function drawIcon(SIZE) {
+  const c = makeCanvas(SIZE, SIZE);
+  const { px, fillRect, fillRounded, hLine, radialGlow, thickLine } = c;
+  const S = SIZE / 512;
+  const s = v => v * S;
 
-  // Diagonal stroke: from (nx+nw-nT, ny+nT) down to (nx+nT*2, ny+nh)
-  line(nx+nw-nT/2, ny+nT, nx+nT*2, ny+nh, nT, ...gold);
+  // ─ Background ─
+  fillRounded(0, 0, SIZE, SIZE, s(90), 14, 10, 6);
 
-  // Glow behind the "7"
-  radialGlow(nx+nw/2, ny+nh/2, s(90), 224, 180, 40, 40);
+  // ─ Warm glow from bottom-center ─
+  radialGlow(SIZE*0.5, SIZE*0.78, SIZE*0.68, 90, 48, 8, 130);
+  // ─ Cool dark glow from top ─
+  radialGlow(SIZE*0.5, SIZE*0.15, SIZE*0.50, 8, 18, 38, 90);
 
-  // ─ Subtle gold border ─
-  for (let d = 2; d <= 4; d++)
-    fillRounded(d, d, size-d*2, size-d*2, s(88)-d, 200, 160, 40, 35);
+  // ─ Pyramid geometry (source 260×86, scale=1.815, x+20, y_base=178) ─
+  // Scaled: cw=80, gap_stride=98, ry=65
+  // Bottom row y=269, middle y=223, top y=178
+  const cw=s(80), ch=s(65), rx=s(7);
+  const yTop=s(178), yMid=s(223), yBot=s(269);
+
+  // ─ TOP ROW — 2 darkest face-down ─
+  const topXs = [s(167), s(265)];
+  topXs.forEach(x => {
+    fillRounded(x, yTop, cw, ch, rx, 8, 14, 28);
+    hLine(x+s(8), yTop+s(14), cw-s(16), 18, 46, 80, 200);
+    hLine(x+s(8), yTop+s(27), cw-s(16), 18, 46, 80, 160);
+    hLine(x+s(8), yTop+s(40), cw-s(16), 18, 46, 80, 130);
+    // border
+    for(let d=0;d<2;d++) fillRounded(x+d,yTop+d,cw-d*2,ch-d*2,rx,26,45,80,80);
+  });
+
+  // ─ MIDDLE ROW — 4 face-down ─
+  const midXs = [s(69), s(167), s(265), s(363)];
+  midXs.forEach(x => {
+    fillRounded(x, yMid, cw, ch, rx, 14, 24, 40);
+    hLine(x+s(8), yMid+s(13), cw-s(16), 28, 50, 80, 200);
+    hLine(x+s(8), yMid+s(26), cw-s(16), 28, 50, 80, 160);
+    hLine(x+s(8), yMid+s(39), cw-s(16), 28, 50, 80, 130);
+    for(let d=0;d<2;d++) fillRounded(x+d,yMid+d,cw-d*2,ch-d*2,rx,30,58,95,90);
+  });
+
+  // ─ BOTTOM ROW — 5 colored face-up ─
+  const botXs = [s(20), s(118), s(216), s(314), s(412)];
+  const cardColors = [
+    [192, 104, 48,  255,200,140],  // orange-brown + light
+    [ 30, 104, 180, 120,190,255],  // blue
+    [ 26, 136,  66, 120,240,160],  // green
+    [184,  34,  34, 255,130,130],  // red
+    [112,  34, 176, 200,130,255],  // purple
+  ];
+  botXs.forEach((x, i) => {
+    const [r,g,b, lr,lg,lb] = cardColors[i];
+    fillRounded(x, yBot, cw, ch, rx, r, g, b);
+    // top highlight bar
+    fillRounded(x, yBot, cw, s(16), rx, lr, lg, lb, 80);
+    // label lines
+    fillRect(x+s(8), yBot+s(28), s(40), s(7), 255,255,255, 100);
+    fillRect(x+s(8), yBot+s(41), s(28), s(6), 255,255,255,  65);
+    // border
+    for(let d=0;d<2;d++) fillRounded(x+d,yBot+d,cw-d*2,ch-d*2,rx, lr,lg,lb, 70);
+  });
+
+  // ─ Gold glow & bar below pyramid ─
+  radialGlow(SIZE*0.5, s(354), SIZE*0.44, 224, 180, 40, 55);
+  for (let x=0; x<SIZE; x++) {
+    const t = Math.sin(Math.PI * x / SIZE);
+    if (t > 0.05) fillRect(x, s(352), 1, s(3), 224, 180, 40, Math.round(t*180));
+  }
+
+  // ─ "7" numeral using thick strokes ─
+  // Top-center: horizontal bar + diagonal
+  const nx=s(192), ny=s(28), nw=s(128), nh=s(84), nT=s(18);
+  // glow
+  radialGlow(nx+nw/2, ny+nh/2, s(100), 224, 180, 40, 48);
+  // top bar
+  fillRounded(nx, ny, nw, nT, s(5), 236, 192, 48);
+  // diagonal: from top-right to bottom-left
+  thickLine(nx+nw-nT/2, ny+nT, nx+nT*1.5, ny+nh, nT, 236, 192, 48);
+
+  // ─ "WD" small text approximation (simple dot marker) ─
+  // Just a subtle line accent
+  const wy = s(416);
+  for (let x = 0; x < SIZE; x++) {
+    const t = Math.sin(Math.PI * (x - SIZE*0.3) / (SIZE*0.4));
+    if (t > 0) fillRect(x, wy, 1, 1, 200, 160, 40, Math.round(t * 55));
+  }
+
+  // ─ Border ─
+  for (let d=2; d<=5; d++)
+    fillRounded(d, d, SIZE-d*2, SIZE-d*2, s(90)-d, 200, 155, 40, 28);
 
   return c.toPNG();
 }
@@ -218,14 +230,11 @@ function drawIcon(size) {
 // ── Generate & save ────────────────────────────────────────────────
 const outDir = path.join(__dirname, 'icons');
 if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
-
 console.log('Generating icons…');
-
 for (const size of [192, 512]) {
   const png = drawIcon(size);
   const out = path.join(outDir, `icon-${size}.png`);
   fs.writeFileSync(out, png);
-  console.log(`  ✓ icons/icon-${size}.png  (${png.length} bytes)`);
+  console.log(`  ✓ icons/icon-${size}.png  (${png.length.toLocaleString()} bytes)`);
 }
-
 console.log('Done!');
