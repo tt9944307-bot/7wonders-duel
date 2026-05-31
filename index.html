@@ -21,7 +21,7 @@
       <span id="turn-indicator">Player 1 のターン</span>
     </div>
     <span id="mp-indicator" style="display:none;font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(0,0,0,.4)"></span>
-    <button id="btn-rules">📖 ルール</button>
+    <button id="btn-rules"><svg viewBox="0 0 13 15" width="12" height="14" fill="none" style="display:inline-block;vertical-align:middle;margin-right:4px"><path d="M2 1C2 1 1 1 1 3V13C1 13 1 14 2 14H11C12 14 12 13 12 13V3C12 3 12 1 11 1H2Z" stroke="currentColor" stroke-width="1.4"/><line x1="4" y1="5" x2="9" y2="5" stroke="currentColor" stroke-width="1.2"/><line x1="4" y1="7.5" x2="9" y2="7.5" stroke="currentColor" stroke-width="1.2"/><line x1="4" y1="10" x2="7" y2="10" stroke="currentColor" stroke-width="1.2"/></svg>ルール</button>
     <button id="btn-new-game">新しいゲーム</button>
   </header>
 
@@ -34,7 +34,7 @@
         <div class="player-name p2-name">Player 2</div>
         <div id="p2-wonders" class="wonder-row"></div>
         <div class="player-coins">
-          <span class="coin-icon">🪙</span><span id="p2-coins">7</span>
+          <svg class="coin-svg" viewBox="0 0 13 13" width="13" height="13"><circle cx="6.5" cy="6.5" r="5.5" stroke="#c8a020" stroke-width="1.4" fill="#3a2c00"/><circle cx="6.5" cy="6.5" r="3" stroke="#d4b030" stroke-width="1" fill="none"/></svg><span id="p2-coins">7</span>
         </div>
         <div class="player-vp">
           <span class="vp-icon">★</span><span id="p2-vp">0</span> VP
@@ -99,7 +99,7 @@
           <span class="vp-icon">★</span><span id="p1-vp">0</span> VP
         </div>
         <div class="player-coins">
-          <span class="coin-icon">🪙</span><span id="p1-coins">7</span>
+          <svg class="coin-svg" viewBox="0 0 13 13" width="13" height="13"><circle cx="6.5" cy="6.5" r="5.5" stroke="#c8a020" stroke-width="1.4" fill="#3a2c00"/><circle cx="6.5" cy="6.5" r="3" stroke="#d4b030" stroke-width="1" fill="none"/></svg><span id="p1-coins">7</span>
         </div>
         <div id="p1-wonders" class="wonder-row"></div>
         <div class="player-name p1-name">Player 1</div>
@@ -142,7 +142,7 @@
     </div>
     <div id="modal-buttons">
       <button class="mbutton build"   id="btn-build">建設</button>
-      <button class="mbutton sell"    id="btn-sell">売却 +2🪙</button>
+      <button class="mbutton sell"    id="btn-sell">売却 +2金</button>
       <button class="mbutton wonder"  id="btn-wonder">ワンダー建設</button>
       <button class="mbutton cancel"  id="btn-cancel">✕</button>
     </div>
@@ -183,47 +183,126 @@
 <!-- ── Multiplayer Lobby ──────────────────────────── -->
 <div id="mp-overlay" class="overlay hidden">
   <div id="mp-modal">
-    <div id="mp-title">🏛 7 Wonders Duel</div>
-    <div id="mp-subtitle">対戦モードを選択してください</div>
 
-    <div id="mp-modes">
-      <!-- Local -->
-      <button class="mp-mode-btn" id="btn-local">
-        <div class="mp-mode-icon">🖥</div>
-        <div class="mp-mode-label">ローカル対戦</div>
-        <div class="mp-mode-desc">同じ端末で2人プレイ</div>
-      </button>
-
-      <!-- Online Host -->
-      <button class="mp-mode-btn" id="btn-host">
-        <div class="mp-mode-icon">📡</div>
-        <div class="mp-mode-label">ルームを作成</div>
-        <div class="mp-mode-desc">ルームコードを相手に教える</div>
-      </button>
-
-      <!-- Online Join -->
-      <button class="mp-mode-btn" id="btn-join-open">
-        <div class="mp-mode-icon">🔗</div>
-        <div class="mp-mode-label">ルームに参加</div>
-        <div class="mp-mode-desc">コードを入力して参加</div>
-      </button>
-
-      <!-- CPU -->
-      <button class="mp-mode-btn" id="btn-cpu">
-        <div class="mp-mode-icon">🤖</div>
-        <div class="mp-mode-label">CPU対戦</div>
-        <div class="mp-mode-desc">コンピュータと1人プレイ</div>
-      </button>
+    <!-- Hero: pyramid illustration + title -->
+    <div id="mp-hero">
+      <svg id="mp-pyramid" viewBox="0 0 260 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0"   y="50" width="44" height="36" rx="4" fill="#b06030"/>
+        <rect x="54"  y="50" width="44" height="36" rx="4" fill="#1a5898"/>
+        <rect x="108" y="50" width="44" height="36" rx="4" fill="#186838"/>
+        <rect x="162" y="50" width="44" height="36" rx="4" fill="#9e1e1e"/>
+        <rect x="216" y="50" width="44" height="36" rx="4" fill="#6018a0"/>
+        <rect x="0"   y="50" width="44" height="9"  rx="4" fill="rgba(255,255,255,.18)"/>
+        <rect x="54"  y="50" width="44" height="9"  rx="4" fill="rgba(255,255,255,.18)"/>
+        <rect x="108" y="50" width="44" height="9"  rx="4" fill="rgba(255,255,255,.18)"/>
+        <rect x="162" y="50" width="44" height="9"  rx="4" fill="rgba(255,255,255,.18)"/>
+        <rect x="216" y="50" width="44" height="9"  rx="4" fill="rgba(255,255,255,.18)"/>
+        <rect x="27"  y="25" width="44" height="36" rx="4" fill="#0e1828" stroke="#1c2e46" stroke-width="1"/>
+        <rect x="81"  y="25" width="44" height="36" rx="4" fill="#0e1828" stroke="#1c2e46" stroke-width="1"/>
+        <rect x="135" y="25" width="44" height="36" rx="4" fill="#0e1828" stroke="#1c2e46" stroke-width="1"/>
+        <rect x="189" y="25" width="44" height="36" rx="4" fill="#0e1828" stroke="#1c2e46" stroke-width="1"/>
+        <line x1="33"  y1="32" x2="65"  y2="32" stroke="#1a2e48" stroke-width="1"/>
+        <line x1="87"  y1="32" x2="119" y2="32" stroke="#1a2e48" stroke-width="1"/>
+        <line x1="141" y1="32" x2="173" y2="32" stroke="#1a2e48" stroke-width="1"/>
+        <line x1="195" y1="32" x2="227" y2="32" stroke="#1a2e48" stroke-width="1"/>
+        <rect x="81"  y="0"  width="44" height="36" rx="4" fill="#080e18" stroke="#141e38" stroke-width="1"/>
+        <rect x="135" y="0"  width="44" height="36" rx="4" fill="#080e18" stroke="#141e38" stroke-width="1"/>
+      </svg>
+      <p id="mp-eyebrow">STRATEGY · CARD · GAME</p>
+      <h1 id="mp-title">7 WONDERS DUEL</h1>
+      <p id="mp-subtitle">七不思議の対決</p>
     </div>
+
+    <!-- Mode buttons -->
+    <div id="mp-modes">
+
+      <div class="mp-sep"><span>一人で遊ぶ</span></div>
+
+      <button class="mp-row-btn" id="btn-cpu">
+        <div class="mp-row-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="9" y="13" width="14" height="11" rx="2.5" stroke="#8a5a10" stroke-width="1.6"/>
+            <rect x="12" y="8" width="8" height="7" rx="2" stroke="#8a5a10" stroke-width="1.6"/>
+            <circle cx="13.5" cy="18" r="2" fill="#8a5a10"/>
+            <circle cx="18.5" cy="18" r="2" fill="#8a5a10"/>
+            <line x1="13.5" y1="22" x2="18.5" y2="22" stroke="#8a5a10" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="14" y1="8" x2="14" y2="6" stroke="#8a5a10" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="14" cy="5" r="1.8" stroke="#8a5a10" stroke-width="1.4" fill="none"/>
+            <line x1="9" y1="18" x2="6" y2="20" stroke="#8a5a10" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="23" y1="18" x2="26" y2="20" stroke="#8a5a10" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="13" y1="24" x2="13" y2="27" stroke="#8a5a10" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="19" y1="24" x2="19" y2="27" stroke="#8a5a10" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="mp-row-info">
+          <div class="mp-row-title">CPU と対戦する</div>
+          <div class="mp-row-sub">VS AUTOMATON</div>
+        </div>
+        <svg class="mp-row-chev" viewBox="0 0 8 14" fill="none"><path d="M1 1l6 6-6 6" stroke="#b89040" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <div class="mp-sep"><span>ふたりで遊ぶ</span></div>
+
+      <button class="mp-row-btn" id="btn-local">
+        <div class="mp-row-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="9" r="4" stroke="#1a4870" stroke-width="1.6"/>
+            <path d="M2 27c0-5 3.5-8 8-8" stroke="#1a4870" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M18 27c0-5-3.5-8-8-8" stroke="#1a4870" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="22" cy="9" r="4" stroke="#1a4870" stroke-width="1.6"/>
+            <path d="M30 27c0-5-3.5-8-8-8" stroke="#1a4870" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M14 27c0-5 3.5-8 8-8" stroke="#1a4870" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="mp-row-info">
+          <div class="mp-row-title">ローカル対戦</div>
+          <div class="mp-row-sub">SAME DEVICE · 2 PLAYERS</div>
+        </div>
+        <svg class="mp-row-chev" viewBox="0 0 8 14" fill="none"><path d="M1 1l6 6-6 6" stroke="#b89040" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <button class="mp-row-btn" id="btn-host">
+        <div class="mp-row-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="8" y1="4" x2="8" y2="28" stroke="#186830" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 5L24 10L8 15Z" fill="#186830" opacity=".85"/>
+            <circle cx="8" cy="28" r="2.5" fill="#186830"/>
+          </svg>
+        </div>
+        <div class="mp-row-info">
+          <div class="mp-row-title">ルームを作成</div>
+          <div class="mp-row-sub">RAISE BANNER · HOST</div>
+        </div>
+        <svg class="mp-row-chev" viewBox="0 0 8 14" fill="none"><path d="M1 1l6 6-6 6" stroke="#b89040" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <button class="mp-row-btn" id="btn-join-open">
+        <div class="mp-row-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 28V15C5 9.5 9 5 16 5C23 5 27 9.5 27 15V28" stroke="#8a1818" stroke-width="1.6"/>
+            <path d="M11 28V17C11 14 13.5 12 16 12C18.5 12 21 14 21 17V28" stroke="#8a1818" stroke-width="1.6"/>
+            <line x1="5" y1="28" x2="27" y2="28" stroke="#8a1818" stroke-width="1.6"/>
+            <line x1="16" y1="22" x2="16" y2="15" stroke="#8a1818" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M13 18l3-3 3 3" stroke="#8a1818" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="mp-row-info">
+          <div class="mp-row-title">ルームに参加</div>
+          <div class="mp-row-sub">JOIN BATTLE · GUEST</div>
+        </div>
+        <svg class="mp-row-chev" viewBox="0 0 8 14" fill="none"><path d="M1 1l6 6-6 6" stroke="#b89040" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+    </div><!-- /#mp-modes -->
 
     <!-- Host panel -->
     <div id="mp-host-panel" class="mp-panel hidden">
       <div id="mp-room-code-wrap" class="hidden">
         <div class="mp-label">ルームコード</div>
         <div id="mp-room-display" class="mp-code-big"></div>
-        <button id="btn-copy-code" class="mp-small-btn">📋 コピー</button>
+        <button id="btn-copy-code" class="mp-small-btn">コピー</button>
       </div>
-      <div id="mp-waiting-msg" class="mp-wait-msg hidden">⏳ 相手の接続を待っています…</div>
+      <div id="mp-waiting-msg" class="mp-wait-msg hidden">接続を待っています…</div>
     </div>
 
     <!-- Join panel -->

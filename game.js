@@ -22,10 +22,22 @@ updateCardGeometry();
 const RAW_RES = ['wood','stone','clay','ore'];
 const MFG_RES = ['glass','papyrus'];
 const ALL_RES  = [...RAW_RES, ...MFG_RES];
-const RES_JP   = { wood:'木', stone:'石', clay:'土', ore:'鉄', glass:'ガ', papyrus:'紙', coins:'🪙' };
-const SCI_SYM  = { tablet:'📜', compass:'🧭', gear:'⚙', mortar:'⚗', wheel:'⊙', astrolabe:'✦', law:'⚖' };
-const TOKEN_ICON = { agriculture:'🌾', architecture:'🏛', economy:'💰', law:'⚖', masonry:'🪨',
-                     mathematics:'📐', philosophy:'📚', strategy:'⚔', theology:'✝', urbanism:'🏙' };
+const RES_JP   = { wood:'木', stone:'石', clay:'土', ore:'鉄', glass:'ガ', papyrus:'紙', coins:'金' };
+const SCI_SYM  = { tablet:'書', compass:'羅', gear:'歯', mortar:'乳', wheel:'輪', astrolabe:'天', law:'法' };
+// Progress token SVG icons (20×20 viewBox, uses currentColor)
+const _ti = (d) => `<svg class="tok-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">${d}</svg>`;
+const TOKEN_ICON = {
+  agriculture: _ti('<line x1="10" y1="18" x2="10" y2="5" stroke="currentColor" stroke-width="1.4"/><ellipse cx="10" cy="5" rx="2.5" ry="1.8" fill="currentColor"/><ellipse cx="7" cy="8" rx="2" ry="1.4" transform="rotate(-35 7 8)" fill="currentColor" opacity=".7"/><ellipse cx="13" cy="8" rx="2" ry="1.4" transform="rotate(35 13 8)" fill="currentColor" opacity=".7"/><ellipse cx="6" cy="12" rx="1.6" ry="1.2" transform="rotate(-25 6 12)" fill="currentColor" opacity=".5"/><ellipse cx="14" cy="12" rx="1.6" ry="1.2" transform="rotate(25 14 12)" fill="currentColor" opacity=".5"/>'),
+  architecture: _ti('<rect x="3" y="16" width="14" height="2" rx="1" fill="currentColor"/><rect x="3" y="3" width="14" height="2" rx="1" fill="currentColor"/><rect x="5" y="5" width="2.5" height="11" rx="1" fill="currentColor"/><rect x="12.5" y="5" width="2.5" height="11" rx="1" fill="currentColor"/>'),
+  economy: _ti('<ellipse cx="10" cy="14" rx="5" ry="1.8" stroke="currentColor" stroke-width="1.3"/><ellipse cx="10" cy="11" rx="5" ry="1.8" stroke="currentColor" stroke-width="1.3"/><ellipse cx="10" cy="8" rx="5" ry="1.8" stroke="currentColor" stroke-width="1.3" fill="currentColor" opacity=".15"/><line x1="5" y1="11" x2="5" y2="14" stroke="currentColor" stroke-width="1.3"/><line x1="15" y1="11" x2="15" y2="14" stroke="currentColor" stroke-width="1.3"/><line x1="5" y1="8" x2="5" y2="11" stroke="currentColor" stroke-width="1.3"/><line x1="15" y1="8" x2="15" y2="11" stroke="currentColor" stroke-width="1.3"/>'),
+  law: _ti('<line x1="10" y1="3" x2="10" y2="17" stroke="currentColor" stroke-width="1.3"/><line x1="4" y1="3" x2="16" y2="3" stroke="currentColor" stroke-width="1.3"/><line x1="10" y1="3" x2="5" y2="9" stroke="currentColor" stroke-width="1.3"/><line x1="10" y1="3" x2="15" y2="9" stroke="currentColor" stroke-width="1.3"/><path d="M3 9h4l-2 3z" fill="currentColor" opacity=".75"/><path d="M13 9h4l-2 3z" fill="currentColor" opacity=".75"/><line x1="7" y1="17" x2="13" y2="17" stroke="currentColor" stroke-width="1.3"/>'),
+  masonry: _ti('<rect x="3" y="10" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="10" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="4" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/>'),
+  mathematics: _ti('<line x1="10" y1="3" x2="5" y2="17" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="10" y1="3" x2="15" y2="17" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M6 11 Q10 13 14 11" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="10" cy="3" r="1.8" fill="currentColor"/>'),
+  philosophy: _ti('<path d="M5 3C5 3 4 3 4 5V16C4 16 4 17 5 17H15C16 17 16 16 16 16V5C16 5 16 3 15 3H5Z" stroke="currentColor" stroke-width="1.4"/><line x1="7" y1="7" x2="13" y2="7" stroke="currentColor" stroke-width="1.2"/><line x1="7" y1="10" x2="13" y2="10" stroke="currentColor" stroke-width="1.2"/><line x1="7" y1="13" x2="11" y2="13" stroke="currentColor" stroke-width="1.2"/>'),
+  strategy: _ti('<line x1="4" y1="4" x2="16" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="16" y1="4" x2="4" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="3" y1="11.5" x2="8.5" y2="11.5" stroke="currentColor" stroke-width="1.5"/><line x1="11.5" y1="8.5" x2="17" y2="8.5" stroke="currentColor" stroke-width="1.5"/>'),
+  theology: _ti('<line x1="10" y1="3" x2="10" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'),
+  urbanism: _ti('<rect x="2" y="10" width="5" height="8" stroke="currentColor" stroke-width="1.4"/><rect x="13" y="6" width="5" height="12" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="13" width="6" height="5" stroke="currentColor" stroke-width="1.4"/><line x1="2" y1="18" x2="18" y2="18" stroke="currentColor" stroke-width="1.4"/>')
+};
 // Draft order: P1,P2,P2,P1 then P2,P1,P1,P2
 const DRAFT_ORDER = [1,2,2,1, 2,1,1,2];
 
@@ -97,7 +109,7 @@ function initGame(seed) {
 
   // CPU モード時 P2 の名前を変更
   document.querySelectorAll('.p2-name').forEach(el => {
-    el.textContent = cpuMode ? '🤖 CPU' : 'Player 2';
+    el.textContent = cpuMode ? 'CPU' : 'Player 2';
   });
 
   renderAll();
@@ -394,7 +406,7 @@ function updateTurnLabel() {
   const el = document.getElementById('turn-indicator');
   if (G.phase !== 'play') { el.textContent = ''; el.className = ''; return; }
   if (cpuMode && G.turn === cpuPlayerNum) {
-    el.textContent = '🤖 CPU 思考中…';
+    el.textContent = 'CPU 思考中…';
     el.className = 'cpu-thinking';
   } else {
     el.textContent = `Player ${G.turn} のターン`;
