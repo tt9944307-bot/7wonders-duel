@@ -160,7 +160,7 @@ body {
 }
 .cpu-thinking { color: var(--gold-bright) !important; font-style: italic; }
 
-#btn-new-game, #btn-rules {
+#btn-new-game, #btn-rules, #btn-exit-match {
   background: var(--bg-raised);
   border: 1px solid var(--border-l);
   color: var(--text-dim);
@@ -176,6 +176,8 @@ body {
 #btn-new-game:hover { border-color: var(--gold); color: var(--gold-bright); background: var(--gold-bg); }
 #btn-rules { border-color: var(--gold); color: var(--gold-bright); background: var(--gold-bg); }
 #btn-rules:hover { border-color: var(--gold-bright); filter: brightness(1.15); }
+#btn-exit-match { border-color: rgba(220,70,70,.45); color: rgba(255,120,120,.85); background: rgba(180,40,40,.10); }
+#btn-exit-match:hover { border-color: rgba(255,80,80,.70); color: #ff8080; background: rgba(180,40,40,.18); }
 
 #mp-indicator {
   font-size: 11px;
@@ -1714,7 +1716,7 @@ body {
   #game-header { padding: 0 10px; gap: 7px; }
   #logo { font-size: 13px; letter-spacing: .5px; max-width: 88px; overflow: hidden; white-space: nowrap; }
   #btn-new-game { display: none; }
-  #btn-rules { font-size: 11px; padding: 4px 9px; }
+  #btn-rules, #btn-exit-match { font-size: 11px; padding: 4px 9px; }
 
   #military-track { gap: 1px; padding: 3px 5px; }
   .track-cell { width: 14px; height: 14px; font-size: 0; }

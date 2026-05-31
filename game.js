@@ -1953,8 +1953,16 @@ function switchRulesTab(n) {
 
 // ── Event listeners ───────────────────────────────
 document.getElementById('btn-new-game').addEventListener('click', () => {
-  // 新しいゲームはロビーに戻る
   cpuMode = false;
+  document.getElementById('mp-overlay').classList.remove('hidden');
+});
+document.getElementById('btn-exit-match').addEventListener('click', () => {
+  if (!confirm('マッチを退出してホーム画面に戻りますか？')) return;
+  cpuMode = false;
+  G.phase = 'end';
+  document.getElementById('modal-overlay').classList.add('hidden');
+  document.getElementById('victory-overlay').classList.add('hidden');
+  document.getElementById('btn-restore-result').classList.remove('visible');
   document.getElementById('mp-overlay').classList.remove('hidden');
 });
 document.getElementById('btn-build').addEventListener('click', doBuild);
