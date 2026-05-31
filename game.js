@@ -3,8 +3,22 @@
    7 Wonders Duel — game.js
 ===================================================== */
 
-// ── Constants ─────────────────────────────────────
-const CW = 78, CH = 110, CU = 43, RU = 62;
+// ── Card geometry (モバイルで自動切替) ──────────────
+// デスクトップ: 78×110px / モバイル(<600px): 54×76px / 極小(<380px): 44×62px
+let CW, CH, CU, RU;
+function updateCardGeometry() {
+  const w = window.innerWidth;
+  if      (w >= 600) { CW=78;  CH=110; CU=43; RU=62; }
+  else if (w >= 380) { CW=54;  CH=76;  CU=30; RU=46; }
+  else               { CW=44;  CH=62;  CU=24; RU=38; }
+  // CSS カスタムプロパティと同期
+  const r = document.documentElement.style;
+  r.setProperty('--cw', CW+'px');
+  r.setProperty('--ch', CH+'px');
+  r.setProperty('--cu', CU+'px');
+  r.setProperty('--ru', RU+'px');
+}
+updateCardGeometry();
 const RAW_RES = ['wood','stone','clay','ore'];
 const MFG_RES = ['glass','papyrus'];
 const ALL_RES  = [...RAW_RES, ...MFG_RES];
@@ -1753,6 +1767,17 @@ document.getElementById('btn-rules').addEventListener('click', () => {
 });
 document.getElementById('btn-rules-close').addEventListener('click', () => {
   document.getElementById('rules-overlay').classList.add('hidden');
+});
+
+// ── Resize handler ────────────────────────────────
+let _resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(() => {
+    const prev = CW;
+    updateCardGeometry();
+    if (CW !== prev && G.phase === 'play') renderPyramid();
+  }, 150);
 });
 
 // ── Boot ──────────────────────────────────────────
