@@ -25,6 +25,11 @@ let mpPeer      = null;
 let mpConn      = null;
 let myPlayerNum = 1;                   // host=1, guest=2
 
+// ── CPU / AI globals ──────────────────────────────
+let cpuMode      = false;
+let cpuPlayerNum = 2;                  // CPU は常に P2
+const AI_DELAY   = 850;               // ms (思考演出)
+
 /** Mulberry32 シード付き擬似乱数 */
 function makePRNG(seed) {
   return function() {
@@ -76,6 +81,11 @@ function initGame(seed) {
   document.getElementById('log-list').innerHTML = '';
   document.getElementById('discard-count').textContent = '0';
 
+  // CPU モード時 P2 の名前を変更
+  document.querySelectorAll('.p2-name').forEach(el => {
+    el.textContent = cpuMode ? '🤖 CPU' : 'Player 2';
+  });
+
   renderAll();
   startDraftRound();
   addLog('ゲーム開始！ワンダーを選んでください。', 'sys');
@@ -98,6 +108,13 @@ function startDraftRound() {
 function showDraftModal() {
   const pNum  = DRAFT_ORDER[G.draftPick];
   const ov    = document.getElementById('draft-overlay');
+
+  // CPU: CPUのターンなら自動ドラフト
+  if (cpuMode && pNum === cpuPlayerNum && !G._replicating) {
+    ov.classList.add('hidden');
+    setTimeout(aiPickWonderDraft, 650 + Math.floor(_rng() * 350));
+    return;
+  }
 
   // MP: 自分のターンでなければオーバーレイを隠す
   if (mpMode !== 'local' && pNum !== myPlayerNum) {
@@ -174,6 +191,11 @@ function startAge(n) {
   document.getElementById('age-label').textContent = `Age ${'III'.slice(0, n === 3 ? 3 : n === 2 ? 2 : 1)}`;
   addLog(`─── Age ${['I','II','III'][n-1]} 開始 ───`, 'sys');
   renderAll();
+
+  // CPU が先手なら自動行動
+  if (cpuMode && G.phase === 'play' && G.turn === cpuPlayerNum) {
+    setTimeout(aiTakeTurn, AI_DELAY);
+  }
 }
 
 // ── Availability ──────────────────────────────────
@@ -356,9 +378,15 @@ function renderWonders(n) {
 
 function updateTurnLabel() {
   const el = document.getElementById('turn-indicator');
-  if (G.phase !== 'play') { el.textContent = ''; return; }
-  el.textContent = `Player ${G.turn} のターン`;
-  el.style.color = G.turn === 1 ? 'var(--p1-col)' : 'var(--p2-col)';
+  if (G.phase !== 'play') { el.textContent = ''; el.className = ''; return; }
+  if (cpuMode && G.turn === cpuPlayerNum) {
+    el.textContent = '🤖 CPU 思考中…';
+    el.className = 'cpu-thinking';
+  } else {
+    el.textContent = `Player ${G.turn} のターン`;
+    el.className = '';
+    el.style.color = G.turn === 1 ? 'var(--p1-col)' : 'var(--p2-col)';
+  }
 }
 
 // ── Card Modal ────────────────────────────────────
@@ -732,6 +760,11 @@ function gainScience(sym, n) {
 
 // ── Progress Token Picker ─────────────────────────
 function showTokenPicker(pool, n) {
+  // CPU: 自動選択
+  if (cpuMode && n === cpuPlayerNum && !G._replicating) {
+    aiPickTokenAuto(pool, n);
+    return;
+  }
   // MP: 複製中（相手のアクション適用中）はオーバーレイを表示しない
   if (G._replicating) return;
 
@@ -770,6 +803,11 @@ function gainToken(token, n) {
 function showDestroyPicker(targets, victimN, wonderName, playAgain, loot=false, attackerN=null) {
   // コンテキストを保存（MP時に相手側で復元するため）
   G._pickerCtx = { type:'destroy', victimN, playAgain, loot, attackerN };
+  // CPU: 自動選択（CPUが破壊者の場合）
+  if (cpuMode && G.turn === cpuPlayerNum && !G._replicating) {
+    aiPickDestroyAuto(targets, G._pickerCtx);
+    return;
+  }
   // MP: 複製中はオーバーレイを表示しない（相手が選択するため）
   if (G._replicating) return;
 
@@ -807,6 +845,11 @@ function showDestroyPicker(targets, victimN, wonderName, playAgain, loot=false, 
 // ── Discard Picker ────────────────────────────────
 function showDiscardPicker(n) {
   if (!G.discard.length) { addLog('捨て札なし', 'sys'); afterAction(); return; }
+  // CPU: 自動選択
+  if (cpuMode && n === cpuPlayerNum && !G._replicating) {
+    aiPickDiscardAuto(n);
+    return;
+  }
   // MP: 複製中はオーバーレイを表示しない（discard_pick イベントを待つ）
   if (G._replicating) return;
 
@@ -840,6 +883,10 @@ function afterAction(playAgain = false) {
   renderAll();
   if (checkVictory()) return;
   if (!checkAgeEnd() && G.phase === 'play' && !playAgain) switchTurn();
+  // CPU が手番なら自動行動スケジュール
+  if (cpuMode && G.phase === 'play' && G.turn === cpuPlayerNum) {
+    setTimeout(aiTakeTurn, AI_DELAY);
+  }
 }
 
 function switchTurn() {
@@ -1119,7 +1166,13 @@ function mp_init() {
   document.getElementById('mp-overlay').classList.remove('hidden');
 
   document.getElementById('btn-local').onclick = () => {
-    mpMode = 'local'; myPlayerNum = 1;
+    mpMode = 'local'; myPlayerNum = 1; cpuMode = false;
+    document.getElementById('mp-overlay').classList.add('hidden');
+    initGame();
+  };
+
+  document.getElementById('btn-cpu').onclick = () => {
+    mpMode = 'local'; myPlayerNum = 1; cpuMode = true; cpuPlayerNum = 2;
     document.getElementById('mp-overlay').classList.add('hidden');
     initGame();
   };
@@ -1327,13 +1380,380 @@ function mp_setStatus(msg) {
   if (el) el.textContent = msg;
 }
 
+// ══════════════════════════════════════════════════════
+//  CPU / AI  ─ 評価関数と自動行動
+// ══════════════════════════════════════════════════════
+
+/** カードを建設したときの価値スコア（大きいほど良い） */
+function aiCardScore(card, n) {
+  const p    = G.players[n];
+  const oppN = n === 1 ? 2 : 1;
+  const opp  = G.players[oppN];
+  const e    = card.effect || {};
+  let   s    = 0;
+
+  // コストペナルティ（安い方が良い）
+  const cr = calcCost(card, n);
+  if (cr.free) s += 10;           // チェーン = ボーナス
+  s -= cr.cost * 0.45;
+
+  // 直接 VP
+  if (e.vp) s += e.vp * 3.2;
+
+  // 資源 — 将来の取引コスト削減
+  if (e.res) {
+    Object.entries(e.res).forEach(([r, a]) => {
+      s += tradeRate(r, n) * a * 1.8;
+    });
+  }
+  if (e.choice) {
+    const maxRate = Math.max(...e.choice.map(r => tradeRate(r, n)));
+    s += maxRate * 1.4;
+  }
+  if (e.fixedTrade === 'raw')          s += 9;
+  else if (e.fixedTrade === 'manufactured') s += 7;
+
+  // 軍事
+  if (e.shields) {
+    const myPos  = n === 1 ?  G.militaryPawn : -G.militaryPawn;
+    const oppPos = n === 1 ? -G.militaryPawn :  G.militaryPawn;
+    s += e.shields * 3.5;
+    [3, 6, 9].forEach(th => {
+      if (myPos < th && myPos + e.shields >= th) {
+        s += th === 9 ? 40 : th === 6 ? 14 : 7;
+      }
+    });
+    if (oppPos >= 3) s += 4;
+    if (oppPos >= 6) s += 9;
+  }
+
+  // 科学
+  if (e.science) {
+    const sym  = e.science;
+    const have = p.builtCards.filter(c => c.effect?.science === sym).length
+               + p.progressTokens.filter(t => t.effect?.science === sym).length;
+    s += 6;
+    if (have === 1) s += 20;   // ペア → トークン獲得
+    const distinct = new Set([
+      ...p.builtCards.filter(c => c.effect?.science).map(c => c.effect.science),
+      ...p.progressTokens.filter(t => t.effect?.science).map(t => t.effect.science),
+    ]);
+    if (distinct.size >= 5) s += 60;  // 6種 → 科学覇権
+    // 相手の科学をブロック
+    const oppHave = opp.builtCards.filter(c => c.effect?.science === sym).length;
+    if (oppHave >= 1) s += 7;
+  }
+
+  // コイン
+  if (e.coins) s += e.coins * 0.9;
+  if (e.coinsPerBrown || e.coinsPerYellow || e.coinsPerGrey || e.coinsPerWonder) s += 4;
+
+  // チェーン先
+  if (card.chainTo) s += 1.5;
+
+  // ギルド・黄色カードの終了VP（概算）
+  if (card.color === 'purple') s += 9;
+
+  return s;
+}
+
+/** ワンダー建設のスコア */
+function aiWonderScore(wonder, sacrificeCard, n) {
+  const e  = wonder.effect || {};
+  const cr = calcCost(wonder, n);
+  let   s  = 14;  // ワンダーはそれ自体に価値がある
+
+  if (e.vp)                  s += e.vp * 3.6;
+  if (e.shields)             s += e.shields * 4.5;
+  if (e.coins)               s += e.coins * 0.9;
+  if (e.playAgain)           s += 20;   // もう1手番は非常に強力
+  if (e.destroyOpponentCard) s += 15;
+  if (e.opponentLosesCoins)  s += e.opponentLosesCoins * 0.9;
+  if (e.draw3ProgressTokens) s += 13;
+  if (e.buildFromDiscard)    s += G.discard.length >= 2 ? 13 : 5;
+  if (e.produceAnyRawMaterial)   s += 6;
+  if (e.produceAnyManufactured)  s += 5;
+  if (e.buildOneFreeOncePerAge)  s += 9;
+
+  s -= cr.cost * 0.5;
+  s -= aiCardScore(sacrificeCard, n) * 0.28;  // 犠牲カードの機会費用
+
+  return s;
+}
+
+/** プログレストークンのスコア */
+function aiTokenScore(token, n) {
+  const p = G.players[n];
+  const e = token.effect || {};
+  let s = 0;
+  if (e.immediateCoins) s += e.immediateCoins * 0.9;
+  if (e.endVP)          s += e.endVP * 2.8;
+  if (e.science) {
+    s += 12;
+    const have = p.builtCards.filter(c => c.effect?.science === e.science).length;
+    if (have >= 1) s += 20;  // 即ペア
+  }
+  switch (token.id) {
+    case 'mathematics':  s += 4 * (p.progressTokens.length + 1) + 4; break;
+    case 'philosophy':   s += 8;  break;
+    case 'urbanism':     s += 6;  break;
+    case 'economy':      s += 6;  break;
+    case 'architecture': s += 8;  break;
+    case 'strategy':     s += 6;  break;
+    case 'masonry':      s += 5;  break;
+    case 'theology':     s += 6;  break;
+    case 'agriculture':  s += 6;  break;
+    case 'law':          s += 12; break;
+  }
+  s += _rng() * 3;  // わずかな揺らぎ
+  return s;
+}
+
+/** メイン: CPU のターンで最良手を選んで実行 */
+function aiTakeTurn() {
+  if (!cpuMode || G.phase !== 'play' || G.turn !== cpuPlayerNum) return;
+  const n         = cpuPlayerNum;
+  const available = G.ageCards.filter(c => c.available && c.faceUp);
+  if (!available.length) return;
+
+  let bestS = -Infinity, best = null;
+
+  for (const card of available) {
+    const cr = calcCost(card, n);
+
+    // 建設
+    if (cr.canAfford) {
+      const s = aiCardScore(card, n);
+      if (s > bestS) { bestS = s; best = { type: 'build', card }; }
+    }
+
+    // ワンダー建設
+    G.players[n].wonders.filter(w => !w.built).forEach(w => {
+      const wcr = calcCost(w, n);
+      if (wcr.canAfford) {
+        const s = aiWonderScore(w, card, n);
+        if (s > bestS) { bestS = s; best = { type: 'wonder', card, wonder: w }; }
+      }
+    });
+
+    // 売却（低い基本スコア；コインが少ないと相対的に価値が上がる）
+    const sellS = 3.5 + Math.max(0, 8 - G.players[n].coins) * 0.4;
+    if (sellS > bestS) { bestS = sellS; best = { type: 'sell', card }; }
+  }
+
+  if (!best) return;
+
+  setTimeout(() => {
+    if (G.phase !== 'play' || G.turn !== cpuPlayerNum) return;
+    switch (best.type) {
+      case 'build':
+        G.selectedCard = best.card;
+        doBuild();
+        break;
+      case 'sell':
+        G.selectedCard = best.card;
+        doSell();
+        break;
+      case 'wonder':
+        G.pendingCard = best.card;
+        doBuildWonder(best.wonder);
+        break;
+    }
+  }, AI_DELAY + Math.floor(_rng() * 400));
+}
+
+/** CPU ワンダードラフト自動選択 */
+function aiPickWonderDraft() {
+  const pNum  = DRAFT_ORDER[G.draftPick];
+  if (pNum !== cpuPlayerNum) return;
+  const avail = G.draftPool.filter(w => !w.picked);
+  if (!avail.length) return;
+
+  let bestS = -Infinity, bestW = null;
+  avail.forEach(w => {
+    const e = w.effect || {};
+    let s = 0;
+    if (e.vp)                   s += e.vp * 2.2;
+    if (e.shields)              s += e.shields * 3.5;
+    if (e.playAgain)            s += 14;
+    if (e.destroyOpponentCard)  s += 12;
+    if (e.draw3ProgressTokens)  s += 10;
+    if (e.buildFromDiscard)     s += 8;
+    if (e.produceAnyRawMaterial)    s += 6;
+    if (e.produceAnyManufactured)   s += 5;
+    if (e.buildOneFreeOncePerAge)   s += 8;
+    if (e.coins)                s += e.coins * 0.8;
+    if (e.opponentLosesCoins)   s += e.opponentLosesCoins * 0.8;
+    const costSum = Object.values(w.cost || {}).reduce((a, b) => a + b, 0);
+    s -= costSum * 0.2;
+    s += _rng() * 3;
+    if (s > bestS) { bestS = s; bestW = w; }
+  });
+
+  if (bestW) setTimeout(() => pickWonder(bestW, cpuPlayerNum), 600 + Math.floor(_rng() * 300));
+}
+
+/** CPU トークン自動選択 */
+function aiPickTokenAuto(pool, n) {
+  let bestS = -Infinity, best = null;
+  pool.forEach(t => {
+    const s = aiTokenScore(t, n);
+    if (s > bestS) { bestS = s; best = t; }
+  });
+  if (!best) return;
+  setTimeout(() => {
+    gainToken(best, n);
+    document.getElementById('draft-overlay').classList.add('hidden');
+    if (G.afterPick) { G.afterPick(); G.afterPick = null; }
+  }, 700 + Math.floor(_rng() * 300));
+}
+
+/** CPU 破壊ピッカー自動選択（CPUが攻撃者の場合） */
+function aiPickDestroyAuto(targets, ctx) {
+  // 対戦相手にとって最も価値の高いカードを破壊
+  let bestS = -Infinity, best = null;
+  targets.forEach(card => {
+    const e = card.effect || {};
+    let s = 0;
+    if (e.vp)         s += e.vp * 3;
+    if (e.science)    s += 14;
+    if (e.shields)    s += e.shields * 4;
+    if (e.fixedTrade) s += 9;
+    if (e.res)        Object.entries(e.res).forEach(([, a]) => s += a * 2.5);
+    if (e.choice)     s += 5;
+    s += _rng() * 2;
+    if (s > bestS) { bestS = s; best = card; }
+  });
+  if (!best) return;
+  setTimeout(() => {
+    const { victimN, playAgain, loot, attackerN } = ctx;
+    G.players[victimN].builtCards = G.players[victimN].builtCards.filter(c => c !== best);
+    G.discard.push(best);
+    document.getElementById('discard-count').textContent = G.discard.length;
+    addLog(`P${victimN} ${best.nameJP} 破壊（CPU）`, `p${victimN}`);
+    if (loot && attackerN) {
+      const lootAmt = best.effect?.coins || 0;
+      if (lootAmt > 0) { G.players[attackerN].coins += lootAmt; addLog(`P${attackerN} 略奪+${lootAmt}🪙`, `p${attackerN}`); }
+    }
+    document.getElementById('draft-overlay').classList.add('hidden');
+    G._pickerCtx = null;
+    renderAll();
+    afterAction(playAgain);
+  }, 700 + Math.floor(_rng() * 300));
+}
+
+/** CPU 捨て札ピッカー自動選択 */
+function aiPickDiscardAuto(n) {
+  if (!G.discard.length) { afterAction(); return; }
+  let bestS = -Infinity, best = null;
+  G.discard.forEach(card => {
+    const s = aiCardScore(card, n) + _rng() * 2;
+    if (s > bestS) { bestS = s; best = card; }
+  });
+  if (!best) return;
+  setTimeout(() => {
+    G.discard = G.discard.filter(c => c !== best);
+    G.players[n].builtCards.push(best);
+    if (best.chainTo) G.players[n].chainSymbols.add(best.id);
+    applyFx(best.effect, n);
+    addLog(`CPU: 捨て札から建設 ${best.nameJP}`, 'p2');
+    document.getElementById('draft-overlay').classList.add('hidden');
+    renderAll();
+    if (G.afterPick) { G.afterPick(); G.afterPick = null; }
+    else afterAction();
+  }, 700 + Math.floor(_rng() * 300));
+}
+
+// ── ルール説明 HTML ───────────────────────────────
+function getRulesHTML() {
+  return `
+<div class="rules-section">
+  <div class="rules-h2">基本の流れ</div>
+  <p>3つのAge（時代）を通じ、ピラミッド状に並んだカードから<strong>利用可能な1枚</strong>を選び、次の3つのうちいずれかを行います。</p>
+  <ul>
+    <li>🏗 <strong>建設</strong> — コストを払いカードをボードに置く（効果を得る）</li>
+    <li>💰 <strong>売却</strong> — カードを捨てて <strong>2コイン</strong>（＋黄カードのボーナス）を得る</li>
+    <li>🏛 <strong>ワンダー建設</strong> — カードを消費して自分のワンダーを建設する</li>
+  </ul>
+  <p style="margin-top:4px;color:var(--text-dim);font-size:11px">※ 上（被覆されていない）カードのみ選択可。裏向きカードは表になるまで選択不可。</p>
+</div>
+
+<div class="rules-section">
+  <div class="rules-h2">コストと取引</div>
+  <p>自分が生産していない資源は<strong>取引</strong>で補えます。</p>
+  <p>取引コスト = <strong>2 + 相手が同資源を持つ枚数</strong>（黄カードで引き下げ可）</p>
+  <p><strong>チェーン（無料建設）：</strong>前の時代のカードにあるシンボルを持っていれば、特定のカードをコストなしで建設できます。</p>
+</div>
+
+<div class="rules-section">
+  <div class="rules-h2">カードの種類</div>
+  <table class="rules-table">
+    <tr><td><span class="ctag brown-tag">茶</span>&nbsp;<span class="ctag grey-tag">灰</span></td><td>原料・商品を生産。相手の取引コストが上がる</td></tr>
+    <tr><td><span class="ctag yellow-tag">黄</span></td><td>経済効果・取引コスト固定・コイン獲得など</td></tr>
+    <tr><td><span class="ctag blue-tag">青</span></td><td>勝利点を直接得る（文明カード）</td></tr>
+    <tr><td><span class="ctag red-tag">赤</span></td><td>軍事力（盾🛡）を増やす</td></tr>
+    <tr><td><span class="ctag green-tag">緑</span></td><td>科学シンボルを持つ（ペアでトークン、6種で即勝利）</td></tr>
+    <tr><td><span class="ctag purple-tag">紫</span></td><td>ギルド — 終了時にボード全体に応じた得点</td></tr>
+  </table>
+</div>
+
+<div class="rules-section">
+  <div class="rules-h2">科学</div>
+  <p>同じシンボルを<strong>2枚</strong>持つ → ボードのプログレストークンを1つ選んで獲得</p>
+  <p><strong>7種類</strong>（📜🧭⚙⚗⊙✦⚖）のうち<strong>6種を集める</strong> → <span style="color:var(--green-l);font-weight:700">科学覇権で即時勝利！</span></p>
+</div>
+
+<div class="rules-section">
+  <div class="rules-h2">軍事トラック</div>
+  <p>赤カードの盾で衝突駒を自分側に動かします。</p>
+  <ul>
+    <li>±3 を越えると：相手が <strong>2コイン</strong>失う</li>
+    <li>±6 を越えると：相手が <strong>5コイン</strong>失う</li>
+    <li>±9 に達すると：<span style="color:var(--red-l);font-weight:700">軍事覇権で即時勝利！</span></li>
+  </ul>
+  <p>Age 終了時、駒が相手側 → 次 Age は相手が先手</p>
+</div>
+
+<div class="rules-section">
+  <div class="rules-h2">終了時得点（Age III終了）</div>
+  <table class="rules-table">
+    <tr><td>文明（青）</td><td>カード記載の VP 合計</td></tr>
+    <tr><td>ワンダー</td><td>建設済みワンダーの VP 合計</td></tr>
+    <tr><td>コイン</td><td>3コインにつき 1VP</td></tr>
+    <tr><td>軍事</td><td>駒位置に応じて 1 / 2 / 5 / 10 VP</td></tr>
+    <tr><td>プログレス</td><td>各トークンの終了 VP</td></tr>
+    <tr><td>ギルド（紫）</td><td>条件に応じた VP ＋コイン</td></tr>
+  </table>
+  <p style="margin-top:6px;font-size:11px;color:var(--text-dim)">同点の場合: 文明 VP が多い方の勝ち。それも同じなら引き分け。</p>
+</div>
+
+<div class="rules-section">
+  <div class="rules-h2">ワンダードラフト（ゲーム開始前）</div>
+  <p>4枚ずつ2セットのワンダーを<strong>スネーク順</strong>（P1→P2→P2→P1、P2→P1→P1→P2）で選びます。各プレイヤーは計4つのワンダーを持ちます。</p>
+</div>`;
+}
+
 // ── Event listeners ───────────────────────────────
-document.getElementById('btn-new-game').addEventListener('click', initGame);
+document.getElementById('btn-new-game').addEventListener('click', () => {
+  // 新しいゲームはロビーに戻る
+  cpuMode = false;
+  document.getElementById('mp-overlay').classList.remove('hidden');
+});
 document.getElementById('btn-build').addEventListener('click', doBuild);
 document.getElementById('btn-sell').addEventListener('click', doSell);
 document.getElementById('btn-wonder').addEventListener('click', doWonder);
 document.getElementById('btn-cancel').addEventListener('click', closeModal);
-document.getElementById('btn-play-again').addEventListener('click', initGame);
+document.getElementById('btn-play-again').addEventListener('click', () => {
+  document.getElementById('victory-overlay').classList.add('hidden');
+  initGame();
+});
+document.getElementById('btn-rules').addEventListener('click', () => {
+  document.getElementById('rules-body').innerHTML = getRulesHTML();
+  document.getElementById('rules-overlay').classList.remove('hidden');
+});
+document.getElementById('btn-rules-close').addEventListener('click', () => {
+  document.getElementById('rules-overlay').classList.add('hidden');
+});
 
 // ── Boot ──────────────────────────────────────────
 mp_init();

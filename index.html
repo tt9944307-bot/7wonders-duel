@@ -18,6 +18,7 @@
       <span id="turn-indicator">Player 1 のターン</span>
     </div>
     <span id="mp-indicator" style="display:none;font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(0,0,0,.4)"></span>
+    <button id="btn-rules">📖 ルール</button>
     <button id="btn-new-game">新しいゲーム</button>
   </header>
 
@@ -164,6 +165,15 @@
   </div>
 </div>
 
+<!-- Rules Modal -->
+<div id="rules-overlay" class="overlay hidden">
+  <div id="rules-modal">
+    <div id="rules-title">📖 ルール概要</div>
+    <div id="rules-body"></div>
+    <button id="btn-rules-close" class="mbutton cancel" style="margin-top:4px;align-self:center;min-width:120px">閉じる</button>
+  </div>
+</div>
+
 <!-- Tooltip -->
 <div id="tooltip" class="hidden"></div>
 
@@ -193,6 +203,13 @@
         <div class="mp-mode-icon">🔗</div>
         <div class="mp-mode-label">ルームに参加</div>
         <div class="mp-mode-desc">コードを入力して参加</div>
+      </button>
+
+      <!-- CPU -->
+      <button class="mp-mode-btn" id="btn-cpu">
+        <div class="mp-mode-icon">🤖</div>
+        <div class="mp-mode-label">CPU対戦</div>
+        <div class="mp-mode-desc">コンピュータと1人プレイ</div>
       </button>
     </div>
 
