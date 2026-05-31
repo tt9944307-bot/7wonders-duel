@@ -261,7 +261,8 @@ function renderPyramid() {
       c.faceUp ? c.color : 'face-down',
       c.available ? 'available' : 'covered'
     ].join(' ');
-    el.style.cssText = `left:${x}px;top:${y}px`;
+    // z-index: row 0 (accessible base) = highest; apex = lowest
+    el.style.cssText = `left:${x}px;top:${y}px;z-index:${maxRow - c.row + 1}`;
     el.dataset.lid = c._lid;
     if (c.faceUp) {
       el.innerHTML = `
@@ -404,14 +405,14 @@ function renderWonders(n) {
 
 function updateTurnLabel() {
   const el = document.getElementById('turn-indicator');
+  el.style.color = '';
   if (G.phase !== 'play') { el.textContent = ''; el.className = ''; return; }
   if (cpuMode && G.turn === cpuPlayerNum) {
     el.textContent = 'CPU 思考中…';
     el.className = 'cpu-thinking';
   } else {
     el.textContent = `Player ${G.turn} のターン`;
-    el.className = '';
-    el.style.color = G.turn === 1 ? 'var(--p1-col)' : 'var(--p2-col)';
+    el.className = G.turn === 1 ? 'p1-turn' : 'p2-turn';
   }
 }
 
@@ -1190,12 +1191,6 @@ function tokenTipHTML(t) {
 /** ロビー表示 */
 function mp_init() {
   document.getElementById('mp-overlay').classList.remove('hidden');
-
-  document.getElementById('btn-local').onclick = () => {
-    mpMode = 'local'; myPlayerNum = 1; cpuMode = false;
-    document.getElementById('mp-overlay').classList.add('hidden');
-    initGame();
-  };
 
   document.getElementById('btn-cpu').onclick = () => {
     mpMode = 'local'; myPlayerNum = 1; cpuMode = true; cpuPlayerNum = 2;

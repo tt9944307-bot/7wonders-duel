@@ -965,9 +965,9 @@ body {
 }
 #mp-2p-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 9px;
-  padding: 6px 16px 18px;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 6px 24px 18px;
 }
 .mp-col-btn {
   display: flex; flex-direction: column;
