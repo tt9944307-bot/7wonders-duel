@@ -2,14 +2,68 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>7 Wonders Duel</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#c8a020">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="7WD">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Cinzel:wght@400;600;700;900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- ════════════════════════════════════════════════════
+     SPLASH SCREEN
+════════════════════════════════════════════════════ -->
+<div id="splash">
+  <div id="splash-bg-glow"></div>
+
+  <!-- Animated pyramid of cards -->
+  <div id="splash-pyramid-wrap">
+    <!-- Top card -->
+    <div class="sp-row sp-row-top">
+      <div class="sp-card sp-face-down sp-d5"></div>
+    </div>
+    <!-- Middle row (2) -->
+    <div class="sp-row sp-row-mid">
+      <div class="sp-card sp-face-down sp-d3"></div>
+      <div class="sp-card sp-face-down sp-d4"></div>
+    </div>
+    <!-- Bottom row (3 colored) -->
+    <div class="sp-row sp-row-bot">
+      <div class="sp-card sp-brown  sp-d0"></div>
+      <div class="sp-card sp-blue   sp-d1"></div>
+      <div class="sp-card sp-green  sp-d2"></div>
+    </div>
+    <div id="splash-glow-bar"></div>
+  </div>
+
+  <div id="splash-wordmark">
+    <div id="splash-num">7</div>
+    <div id="splash-title-words">
+      <span id="splash-wonders">WONDERS</span>
+      <span id="splash-duel">DUEL</span>
+    </div>
+  </div>
+
+  <div id="splash-jp">七不思議の対決</div>
+  <div id="splash-tagline">2人用 · 古代建設カード対戦</div>
+
+  <div id="splash-loader">
+    <div id="splash-loader-bar"></div>
+  </div>
+</div>
 
 <div id="game-container">
 
@@ -290,5 +344,36 @@
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="data.js"></script>
 <script src="game.js"></script>
+
+<script>
+// ── Service Worker registration ──────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(r => console.log('[SW] registered:', r.scope))
+      .catch(e => console.warn('[SW] failed:', e));
+  });
+}
+
+// ── Splash screen dismiss ────────────────────────────
+(function() {
+  const splash = document.getElementById('splash');
+  if (!splash) return;
+  // Minimum display time: 2.6s, then fade out
+  const MIN_MS = 2600;
+  const t0 = performance.now();
+  function dismiss() {
+    const elapsed = performance.now() - t0;
+    const delay = Math.max(0, MIN_MS - elapsed);
+    setTimeout(() => {
+      splash.classList.add('splash-out');
+      splash.addEventListener('animationend', () => splash.remove(), { once: true });
+    }, delay);
+  }
+  // Dismiss when page is ready
+  if (document.readyState === 'complete') { dismiss(); }
+  else { window.addEventListener('load', dismiss, { once: true }); }
+})();
+</script>
 </body>
 </html>

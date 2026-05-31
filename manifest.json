@@ -1,0 +1,43 @@
+{
+  "name": "7 Wonders Duel",
+  "short_name": "7WD",
+  "description": "2人用・古代文明カード対戦ゲーム",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0e0a06",
+  "theme_color": "#c8a020",
+  "lang": "ja",
+  "categories": ["games"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "CPUと対戦",
+      "short_name": "CPU対戦",
+      "description": "すぐにCPUと対戦を開始",
+      "url": "./?mode=cpu",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
