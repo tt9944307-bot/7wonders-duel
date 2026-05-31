@@ -4,7 +4,7 @@
 ===================================================== */
 
 // ── Constants ─────────────────────────────────────
-const CW = 68, CH = 96, CU = 38, RU = 56;
+const CW = 78, CH = 110, CU = 43, RU = 62;
 const RAW_RES = ['wood','stone','clay','ore'];
 const MFG_RES = ['glass','papyrus'];
 const ALL_RES  = [...RAW_RES, ...MFG_RES];
