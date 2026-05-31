@@ -1198,6 +1198,48 @@ body {
 .score-label { font-size: 11px; font-weight: 700; color: var(--text); min-width: 64px; font-family: 'Noto Serif JP', serif; }
 .score-val   { font-size: 11px; color: var(--text-dim); flex: 1; }
 
+/* Strategy blocks */
+.strat-block {
+  border-radius: 12px; padding: 12px;
+  display: flex; flex-direction: column; gap: 8px;
+  border: 1.5px solid;
+}
+.strat-mil { background: rgba(160,30,30,.12); border-color: rgba(220,70,70,.30); }
+.strat-sci { background: rgba(25,130,65,.12);  border-color: rgba(60,190,100,.30); }
+.strat-civ { background: rgba(160,130,15,.10); border-color: rgba(200,165,30,.30); }
+
+.strat-header { display: flex; align-items: flex-start; gap: 10px; }
+.strat-icon { font-size: 22px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+.strat-title { font-size: 14px; font-weight: 700; font-family: 'Noto Serif JP', serif; }
+.strat-mil .strat-title { color: #ff8a8a; }
+.strat-sci .strat-title { color: #70e890; }
+.strat-civ .strat-title { color: var(--gold-bright); }
+.strat-sub { font-size: 10px; color: var(--text-dim); margin-top: 2px; line-height: 1.4; }
+
+.strat-body { display: flex; flex-direction: column; gap: 5px; }
+.strat-step {
+  font-size: 11px; color: var(--text); line-height: 1.65;
+  padding-left: 10px; border-left: 2px solid rgba(255,255,255,.10);
+}
+
+.strat-watch {
+  font-size: 10.5px; color: var(--text-dim); line-height: 1.55;
+  padding: 6px 10px; border-radius: 7px;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+}
+
+/* Step badges */
+.step-badge {
+  display: inline-block; padding: 1px 7px; border-radius: 10px;
+  font-size: 10px; font-weight: 700; vertical-align: middle;
+  margin: 0 1px;
+}
+.sb-red    { background: rgba(195,38,38,.30);  color: #ff8a8a; border: 1px solid rgba(220,70,70,.40); }
+.sb-green  { background: rgba(25,155,65,.30);  color: #70e890; border: 1px solid rgba(60,190,100,.40); }
+.sb-blue   { background: rgba(18,95,195,.30);  color: #80c8ff; border: 1px solid rgba(50,140,230,.40); }
+.sb-brown  { background: rgba(120,60,25,.35);  color: #e09060; border: 1px solid rgba(180,100,50,.40); }
+.sb-purple { background: rgba(120,40,200,.30); color: #d080ff; border: 1px solid rgba(160,80,220,.40); }
+
 /* Note box */
 .rules-note {
   padding: 8px 12px; border-radius: 8px;

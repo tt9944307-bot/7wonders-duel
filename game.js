@@ -1689,214 +1689,163 @@ function aiPickDiscardAuto(n) {
 function getRulesHTML() {
   return `
 <div class="rtabs">
-  <button class="rtab active"  onclick="switchRulesTab(0)">🎯 目標</button>
-  <button class="rtab"         onclick="switchRulesTab(1)">🃏 ターン</button>
-  <button class="rtab"         onclick="switchRulesTab(2)">🎨 カード</button>
-  <button class="rtab"         onclick="switchRulesTab(3)">⚔️ 軍事・科学</button>
-  <button class="rtab"         onclick="switchRulesTab(4)">🏆 得点計算</button>
+  <button class="rtab active"  onclick="switchRulesTab(0)">🃏 基本ルール</button>
+  <button class="rtab"         onclick="switchRulesTab(1)">⚔️ 勝ち方ガイド</button>
+  <button class="rtab"         onclick="switchRulesTab(2)">📊 詳細・得点</button>
 </div>
 
-<!-- ── Tab 0: 目標 ── -->
+<!-- ════ Tab 0: 基本ルール ════ -->
 <div class="rtab-panel active" data-tab="0">
-  <p class="rules-intro">
-    <strong>7 Wonders Duel</strong> は2人専用のカード対戦ゲームです。
-    3つのAge（時代）でカードを取り合い、文明を発展させましょう。
-    <br>勝利条件は3種類。<strong>最初に達成した方がその場で勝ちです！</strong>
-  </p>
-  <div class="win-cards">
-    <div class="win-card military">
-      <div class="win-icon">⚔️</div>
-      <div class="win-title">軍事覇権</div>
-      <div class="win-desc">衝突駒を相手側の<br>端まで押し込む</div>
-    </div>
-    <div class="win-card science">
-      <div class="win-icon">🔬</div>
-      <div class="win-title">科学覇権</div>
-      <div class="win-desc">6種類の科学シンボルを<br>すべて揃える</div>
-    </div>
-    <div class="win-card civilian">
-      <div class="win-icon">🏛</div>
-      <div class="win-title">通常勝利</div>
-      <div class="win-desc">Age III 終了後に<br>得点が多い方が勝ち</div>
-    </div>
-  </div>
-  <div class="rules-note">
-    💡 <strong>カードが選べる条件：</strong>ピラミッド状に並んだカードのうち、<strong>上に何も重なっていないカードだけ</strong>が選択できます。裏向きのカードは、表になるまで選択できません。
-  </div>
-</div>
 
-<!-- ── Tab 1: ターン ── -->
-<div class="rtab-panel" data-tab="1">
-  <p class="rules-intro">毎ターン、選べるカードを<strong>1枚</strong>選んで、以下の3つのうち<strong>いずれか1つだけ</strong>行います。</p>
+  <p class="rules-intro">2人専用カード対戦ゲーム。3つのAge（時代）を通じてカードを取り合い、文明を発展させます。<strong>3通りの勝利条件のうち最初に達成した方が勝ち</strong>（即時）、Age III終了後は得点で決定。</p>
+
+  <div class="rules-h2">🃏 毎ターンやること</div>
+  <p class="rules-intro" style="margin-bottom:6px">ピラミッド型のカードから<strong>上に何も重なっていないカード1枚</strong>を選び、以下のいずれか1つを行います。裏向きカードは表になるまで選択不可。</p>
   <div class="action-list">
     <div class="action-item">
       <div class="action-num a-build">🏗</div>
       <div class="action-body">
         <div class="action-title a-build">建設する</div>
-        <div class="action-desc">
-          コストを払ってカードを自分のボードに置きます。カードの効果がずっと有効になります。<br>
-          <strong style="color:var(--text)">チェーン（無料建設）：</strong>前の時代のカードと同じシンボルを持っていれば、コストなしで建設できます。
-        </div>
+        <div class="action-desc">コストを払い自分のボードに置く。効果は永続。<br>
+        <strong style="color:var(--text)">チェーン：</strong>前時代のカードに連なるシンボルがあれば無料で建設できる。</div>
       </div>
     </div>
     <div class="action-item">
       <div class="action-num a-sell">💰</div>
       <div class="action-body">
         <div class="action-title a-sell">売却する（+2コイン）</div>
-        <div class="action-desc">
-          カードを捨てて<strong style="color:var(--gold-bright)">2コイン</strong>を受け取ります。
-          黄カードをたくさん持っているとボーナスコインも増えます。お金がない時の緊急手段です。
-        </div>
+        <div class="action-desc">捨てて<strong style="color:var(--gold-bright)">2コイン</strong>獲得。黄カードが多いほどボーナスも増える。コインが足りない緊急時の手段。</div>
       </div>
     </div>
     <div class="action-item">
       <div class="action-num a-wonder">🏛</div>
       <div class="action-body">
         <div class="action-title a-wonder">ワンダーを建設する</div>
-        <div class="action-desc">
-          カードを「素材」として消費し、自分のワンダーを1つ建設します。強力な特殊効果が得られます。
-          各ワンダーは1回だけ建設できます。
-        </div>
+        <div class="action-desc">カードを素材として消費し、自分のワンダーを1つ建設。強力な特殊効果が得られる。1つにつき1回限り。</div>
       </div>
     </div>
   </div>
-  <div class="rules-note">
-    💡 <strong>資源が足りない時（取引）：</strong>
-    自分が生産していない資源は「相手の同じ資源の枚数 ＋ 2コイン」を払えば補えます。
-    黄カードで取引コストを下げることができます。
-  </div>
-</div>
 
-<!-- ── Tab 2: カードの種類 ── -->
-<div class="rtab-panel" data-tab="2">
-  <p class="rules-intro" style="margin-bottom:2px">カードは色で役割が分かれています。</p>
+  <div class="rules-h2" style="margin-top:4px">🎨 カードの色と役割</div>
   <div class="card-grid">
-    <div class="card-row cr-brown">
-      <div class="card-row-label">茶・灰</div>
-      <div class="card-row-desc">資源を生産します。自分が持つほど相手の取引コストが上がるので序盤に大切。</div>
-    </div>
-    <div class="card-row cr-yellow">
-      <div class="card-row-label">黄</div>
-      <div class="card-row-desc">経済カード。取引コストを下げたり、コインを稼いだりできます。</div>
-    </div>
-    <div class="card-row cr-blue">
-      <div class="card-row-label">青</div>
-      <div class="card-row-desc">勝利点を直接獲得します（文明カード）。終盤に差がつきやすい。</div>
-    </div>
-    <div class="card-row cr-red">
-      <div class="card-row-label">赤</div>
-      <div class="card-row-desc">盾（軍事力）を増やします。軍事覇権を狙うなら積極的に取りましょう。</div>
-    </div>
-    <div class="card-row cr-green">
-      <div class="card-row-label">緑</div>
-      <div class="card-row-desc">科学シンボルを持ちます。同じシンボルを2枚集めるとプログレストークンを獲得。6種類すべて揃えると科学覇権で即勝利！</div>
-    </div>
-    <div class="card-row cr-purple">
-      <div class="card-row-label">紫</div>
-      <div class="card-row-desc">ギルドカード（Age IIIのみ）。ゲーム終了時に、両プレイヤーのボードを参照して得点が決まります。</div>
-    </div>
+    <div class="card-row cr-brown"><div class="card-row-label">茶・灰</div><div class="card-row-desc">資源生産。自分が持つほど相手の取引コストが上がる。序盤に重要。</div></div>
+    <div class="card-row cr-yellow"><div class="card-row-label">黄</div><div class="card-row-desc">経済カード。取引コストを下げたりコインを稼いだりできる。</div></div>
+    <div class="card-row cr-blue"><div class="card-row-label">青</div><div class="card-row-desc">直接 VP を得る文明カード。終盤に差がつく。</div></div>
+    <div class="card-row cr-red"><div class="card-row-label">赤</div><div class="card-row-desc">盾（軍事力）を増やす。軍事覇権を狙うなら積極的に。</div></div>
+    <div class="card-row cr-green"><div class="card-row-label">緑</div><div class="card-row-desc">科学シンボルを持つ。同シンボル2枚でトークン獲得、6種で即勝利。</div></div>
+    <div class="card-row cr-purple"><div class="card-row-label">紫</div><div class="card-row-desc">ギルド（Age IIIのみ）。終了時に両ボードを参照してVP確定。</div></div>
+  </div>
+
+  <div class="rules-note">
+    💡 <strong>資源が足りない時（取引）：</strong>持っていない資源は「相手の同資源枚数 ＋ 2コイン」を払えば補える。黄カードで取引コストを下げられる。
   </div>
 </div>
 
-<!-- ── Tab 3: 軍事・科学 ── -->
-<div class="rtab-panel" data-tab="3">
-  <div class="rules-h2">⚔️ 軍事トラック</div>
-  <p class="rules-intro">赤カードの盾で衝突駒が動きます。駒を相手側に押し込むほど有利になります。</p>
+<!-- ════ Tab 1: 勝ち方ガイド ════ -->
+<div class="rtab-panel" data-tab="1">
+
+  <!-- 軍事覇権 -->
+  <div class="strat-block strat-mil">
+    <div class="strat-header">
+      <span class="strat-icon">⚔️</span>
+      <div>
+        <div class="strat-title">軍事覇権</div>
+        <div class="strat-sub">衝突駒を相手側の端（±9）まで押し込むと即時勝利</div>
+      </div>
+    </div>
+    <div class="strat-body">
+      <div class="strat-step"><span class="step-badge sb-red">赤カード</span>を積極的に取る。1枚ごとに盾が増え、衝突駒が自分側に動く。</div>
+      <div class="strat-step">駒が <strong style="color:var(--gold-bright)">±3</strong> を超えると相手が <strong>2コイン</strong> 失い、<strong style="color:#ff9030">±6</strong> を超えると <strong>5コイン</strong> 失う。コインを削られた相手はカードを建設しにくくなる。</div>
+      <div class="strat-step">終盤で <span class="step-badge sb-red">赤</span>+<span class="step-badge sb-brown">茶/灰（資源）</span> を組み合わせると高コストの赤カードも建設しやすくなる。</div>
+      <div class="strat-step">相手が軍事を無視してくれる間に一気に押し込むのが理想。</div>
+    </div>
+    <div class="strat-watch">⚠️ 相手も赤カードを取り始めたら均衡状態に。そのまま終盤になると軍事 VP の比較になる。</div>
+  </div>
+
+  <!-- 科学覇権 -->
+  <div class="strat-block strat-sci">
+    <div class="strat-header">
+      <span class="strat-icon">🔬</span>
+      <div>
+        <div class="strat-title">科学覇権</div>
+        <div class="strat-sub">7種類の科学シンボルのうち6種類を集めると即時勝利</div>
+      </div>
+    </div>
+    <div class="strat-body">
+      <div class="strat-step"><span class="step-badge sb-green">緑カード</span>を優先的に取る。各カードには「書・羅・歯・乳・輪・天・法」いずれかのシンボルが付いている。</div>
+      <div class="strat-step"><strong>同じシンボルが2枚</strong>揃ったらプログレストークンを1つ選んで獲得できる。トークンは非常に強力（例：無料建設、追加VP、コイン収入など）。</div>
+      <div class="strat-step"><strong>異なる6種類</strong>を揃えれば即勝利。ただし7種のうち6種なので、最後の1種が取れないと詰む場合がある。</div>
+      <div class="strat-step">相手が緑カードに手を出していない序盤がチャンス。取られる前に多くの種類を確保しよう。</div>
+    </div>
+    <div class="strat-watch">⚠️ 相手が同じシンボルを取って「ペア崩し」してくることがある。また軍事で一気に押されると間に合わないことも。</div>
+  </div>
+
+  <!-- 通常勝利 -->
+  <div class="strat-block strat-civ">
+    <div class="strat-header">
+      <span class="strat-icon">🏛</span>
+      <div>
+        <div class="strat-title">通常勝利（得点勝負）</div>
+        <div class="strat-sub">Age III 終了後に合計 VP が多い方が勝ち</div>
+      </div>
+    </div>
+    <div class="strat-body">
+      <div class="strat-step"><span class="step-badge sb-blue">青カード</span>で直接 VP を積み上げる。序盤から取り続けることで終盤に大きな差になる。</div>
+      <div class="strat-step"><strong>ワンダー建設</strong>はVPと強力な特殊効果を両方もたらす。コストが高いが優先度は高い。</div>
+      <div class="strat-step">軍事で少しリードするだけでも 2〜10 VP 得られる。完全無視はしない方が良い。</div>
+      <div class="strat-step">コインも 3枚＝1VP。売却やチェーン活用でコインを適度に保つのが大事。</div>
+      <div class="strat-step"><span class="step-badge sb-purple">紫（ギルド）</span>はAgeIIIのみ登場。自分のボードが充実していれば大量 VP になる。</div>
+    </div>
+    <div class="strat-watch">⚠️ 相手に軍事覇権・科学覇権を許すとVPは関係なく負け。序盤から相手の動向を観察しよう。</div>
+  </div>
+
+  <div class="rules-note">
+    💡 <strong>初心者おすすめの動き：</strong>序盤は茶/灰（資源）を確保しつつ青（VP）を取る。相手が緑に偏ってきたら緑カードを取って邪魔するか、自分も赤で軍事を押していこう。
+  </div>
+</div>
+
+<!-- ════ Tab 2: 詳細・得点 ════ -->
+<div class="rtab-panel" data-tab="2">
+
+  <div class="rules-h2">⚔️ 軍事トラック詳細</div>
   <div class="track-visual">
     <div class="tv-cell tv-p2sup">即</div>
     <div class="tv-spacer"></div>
-    <div class="tv-cell tv-orange">-5</div>
+    <div class="tv-cell tv-orange">-6</div>
     <div class="tv-spacer"></div>
-    <div class="tv-cell tv-gold">-2</div>
+    <div class="tv-cell tv-gold">-3</div>
     <div class="tv-spacer"></div>
     <div class="tv-cell tv-center">0</div>
     <div class="tv-pawn tv-cell"></div>
     <div class="tv-cell tv-center">0</div>
     <div class="tv-spacer"></div>
-    <div class="tv-cell tv-gold">+2</div>
+    <div class="tv-cell tv-gold">+3</div>
     <div class="tv-spacer"></div>
-    <div class="tv-cell tv-orange">+5</div>
+    <div class="tv-cell tv-orange">+6</div>
     <div class="tv-spacer"></div>
     <div class="tv-cell tv-p1sup">即</div>
   </div>
-  <div style="display:flex;flex-direction:column;gap:5px;margin-top:4px">
-    <div class="mil-effect me-gold">
-      <div class="mil-effect-label">±3 突破</div>
-      <div class="mil-effect-desc">相手が <strong style="color:var(--gold-bright)">2コイン</strong> を失う</div>
-    </div>
-    <div class="mil-effect me-orange">
-      <div class="mil-effect-label">±6 突破</div>
-      <div class="mil-effect-desc">相手が <strong style="color:#ff9030">5コイン</strong> を失う</div>
-    </div>
-    <div class="mil-effect me-red">
-      <div class="mil-effect-label">端に到達</div>
-      <div class="mil-effect-desc"><strong style="color:#ff6060">軍事覇権で即時勝利！</strong></div>
-    </div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-top:6px">
+    <div class="mil-effect me-gold"><div class="mil-effect-label">±3 突破</div><div class="mil-effect-desc">相手が <strong style="color:var(--gold-bright)">2コイン</strong> を失う（即時）</div></div>
+    <div class="mil-effect me-orange"><div class="mil-effect-label">±6 突破</div><div class="mil-effect-desc">相手が <strong style="color:#ff9030">5コイン</strong> を失う（即時）</div></div>
+    <div class="mil-effect me-red"><div class="mil-effect-label">±9 到達</div><div class="mil-effect-desc"><strong style="color:#ff6060">軍事覇権で即時勝利！</strong></div></div>
   </div>
 
-  <div class="rules-h2" style="margin-top:12px">🔬 科学トークン</div>
-  <p class="rules-intro">緑カードには7種類の科学シンボル（書・羅・歯・乳・輪・天・法）があります。</p>
-  <div class="action-list" style="margin-top:4px">
-    <div class="action-item">
-      <div class="action-num a-sell" style="font-size:12px;font-weight:900">×2</div>
-      <div class="action-body">
-        <div class="action-title a-sell">同じシンボルを2枚集める</div>
-        <div class="action-desc">プログレストークンを1つ選んで獲得できます（強力な特殊効果！）</div>
-      </div>
-    </div>
-    <div class="action-item">
-      <div class="action-num a-build" style="font-size:12px;font-weight:900">×6</div>
-      <div class="action-body">
-        <div class="action-title a-build">6種類すべて集める</div>
-        <div class="action-desc"><strong style="color:#70e888">科学覇権で即時勝利！</strong></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── Tab 4: 得点計算 ── -->
-<div class="rtab-panel" data-tab="4">
-  <p class="rules-intro">Age III が終了したら合計得点（VP）を比べます。多い方が勝ちです。</p>
+  <div class="rules-h2" style="margin-top:10px">🏆 得点計算（Age III 終了後）</div>
   <div class="score-grid">
-    <div class="score-item">
-      <div class="score-icon">🔵</div>
-      <div class="score-label">文明カード</div>
-      <div class="score-val">各カードに書かれた VP の合計</div>
-    </div>
-    <div class="score-item">
-      <div class="score-icon">🏛</div>
-      <div class="score-label">ワンダー</div>
-      <div class="score-val">建設済みワンダーの VP の合計</div>
-    </div>
-    <div class="score-item">
-      <div class="score-icon">🪙</div>
-      <div class="score-label">コイン</div>
-      <div class="score-val">3コインにつき 1VP（端数は切り捨て）</div>
-    </div>
-    <div class="score-item">
-      <div class="score-icon">⚔️</div>
-      <div class="score-label">軍事</div>
-      <div class="score-val">衝突駒の位置に応じて 1 / 2 / 5 / 10 VP</div>
-    </div>
-    <div class="score-item">
-      <div class="score-icon">📜</div>
-      <div class="score-label">プログレス</div>
-      <div class="score-val">各トークンの終了時ボーナス VP</div>
-    </div>
-    <div class="score-item">
-      <div class="score-icon">🟣</div>
-      <div class="score-label">ギルド（紫）</div>
-      <div class="score-val">条件に応じた VP ＋ コイン（コインは得点に加算）</div>
-    </div>
+    <div class="score-item"><div class="score-icon">🔵</div><div class="score-label">文明カード</div><div class="score-val">各カード記載の VP 合計</div></div>
+    <div class="score-item"><div class="score-icon">🏛</div><div class="score-label">ワンダー</div><div class="score-val">建設済みワンダーの VP 合計</div></div>
+    <div class="score-item"><div class="score-icon">🪙</div><div class="score-label">コイン</div><div class="score-val">3コインにつき 1VP（端数切り捨て）</div></div>
+    <div class="score-item"><div class="score-icon">⚔️</div><div class="score-label">軍事</div><div class="score-val">駒位置に応じて 1 / 2 / 5 / 10 VP</div></div>
+    <div class="score-item"><div class="score-icon">📜</div><div class="score-label">プログレス</div><div class="score-val">各トークンの終了時ボーナス VP</div></div>
+    <div class="score-item"><div class="score-icon">🟣</div><div class="score-label">ギルド（紫）</div><div class="score-val">条件に応じた VP ＋コイン</div></div>
   </div>
   <div class="rules-note" style="margin-top:4px">
-    <strong>同点の場合：</strong>文明カード（青）の VP が多い方が勝ち。それも同じなら引き分け。
+    <strong>同点：</strong>文明カード（青）VP が多い方が勝ち。それも同じなら引き分け。
   </div>
-  <div class="rules-h2" style="margin-top:10px">🎴 ゲーム開始前 — ワンダードラフト</div>
-  <p class="rules-intro">
-    4枚ずつ2セット（計8枚）のワンダーを<strong>スネーク順</strong>で選びます。
-    <br>P1→P2→P2→P1、次にP2→P1→P1→P2の順。各プレイヤーは4つのワンダーを持ちます。
-  </p>
+
+  <div class="rules-h2" style="margin-top:10px">🎴 ワンダードラフト（ゲーム開始前）</div>
+  <p class="rules-intro">4枚×2セット（計8枚）のワンダーを<strong>スネーク順</strong>で選びます。P1→P2→P2→P1、次にP2→P1→P1→P2。各プレイヤーは4ワンダーを持ってゲーム開始。</p>
 </div>
 `;
 }
