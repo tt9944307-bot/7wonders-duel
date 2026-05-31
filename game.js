@@ -309,11 +309,24 @@ function renderPyramid() {
   if (!G.ageCards.length) return;
   const maxRow = Math.max(...G.ageCards.map(c => c.row));
   const maxCol = Math.max(...G.ageCards.map(c => c.col));
-  lay.style.width  = (maxCol * CU + CW) + 'px';
+  const totalW = maxCol * CU + CW;
+  lay.style.width  = totalW + 'px';
   lay.style.height = (maxRow * RU + CH) + 'px';
 
+  // Pre-compute per-row col bounds so each row can be centred in the canvas
+  const rowBounds = {};
   G.ageCards.forEach(c => {
-    const x = c.col * CU;
+    if (!rowBounds[c.row]) rowBounds[c.row] = { min: c.col, max: c.col };
+    else {
+      rowBounds[c.row].min = Math.min(rowBounds[c.row].min, c.col);
+      rowBounds[c.row].max = Math.max(rowBounds[c.row].max, c.col);
+    }
+  });
+
+  G.ageCards.forEach(c => {
+    const rb = rowBounds[c.row];
+    const rowW = (rb.max - rb.min) * CU + CW;
+    const x = (c.col - rb.min) * CU + (totalW - rowW) / 2;  // centred per row
     const y = G.flipV ? (maxRow - c.row) * RU : c.row * RU;
     const el = document.createElement('div');
     el.className = ['game-card',
