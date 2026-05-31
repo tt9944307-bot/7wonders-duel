@@ -1706,6 +1706,102 @@ body {
 .card-appear { animation: slideIn .22s ease forwards; }
 .pawn-moved  { animation: pawnGlow .55s ease; }
 
+/* ── CPU Action Toast ─────────────────────────────── */
+#action-toast {
+  position: fixed;
+  left: 50%;
+  bottom: -90px;
+  transform: translateX(-50%);
+  background: rgba(12,8,4,.93);
+  border: 2px solid var(--p2-col);
+  border-radius: 20px;
+  padding: 9px 22px 10px;
+  font-size: 13.5px;
+  font-family: 'Noto Serif JP', sans-serif;
+  color: #fff;
+  z-index: 450;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 88vw;
+  text-align: center;
+  opacity: 0;
+  letter-spacing: .02em;
+  transition: bottom 0.34s cubic-bezier(.22,.68,0,1.28), opacity 0.28s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 4px 20px rgba(0,0,0,.55);
+}
+#action-toast.toast-show   { bottom: 76px; opacity: 1; }
+#action-toast.toast-build  { border-color: var(--p2-col); }
+#action-toast.toast-sell   { border-color: var(--gold);   }
+#action-toast.toast-wonder { border-color: #c060ff; box-shadow: 0 4px 20px rgba(0,0,0,.55), 0 0 14px rgba(192,96,255,.35); }
+#action-toast.toast-destroy{ border-color: #ff6030; box-shadow: 0 4px 20px rgba(0,0,0,.55), 0 0 14px rgba(255,96,48,.35); }
+
+/* ── CPU Thinking dots ────────────────────────────── */
+@keyframes think-dot {
+  0%,70%,100% { transform: translateY(0);   opacity: 0.28; }
+  35%          { transform: translateY(-5px); opacity: 1;    }
+}
+.cpu-thinking .think-dot {
+  display: inline-block;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold-bright);
+  margin: 0 2px; vertical-align: middle;
+  animation: think-dot 1.1s ease-in-out infinite;
+}
+.cpu-thinking .think-dot:nth-child(2) { animation-delay: 0.22s; }
+.cpu-thinking .think-dot:nth-child(3) { animation-delay: 0.44s; }
+
+/* ── Resource chip gain sparkle ──────────────────── */
+@keyframes rc-gain {
+  0%   { transform: scale(1);    box-shadow: none;                         background-color: transparent; }
+  28%  { transform: scale(1.25); box-shadow: 0 0 9px rgba(90,255,120,.65); background-color: rgba(90,255,120,.4); }
+  100% { transform: scale(1);    box-shadow: none;                         background-color: transparent; }
+}
+.res-chip.rc-gain-anim { animation: rc-gain 0.6s ease-out; }
+
+/* ── Coin gain / lose flash ──────────────────────── */
+@keyframes coin-gain {
+  0%   { background: transparent; transform: scale(1); }
+  28%  { background: rgba(224,180,40,.48); box-shadow: 0 0 10px rgba(224,180,40,.6); transform: scale(1.18); }
+  100% { background: transparent; transform: scale(1); }
+}
+@keyframes coin-lose {
+  0%   { background: transparent; }
+  28%  { background: rgba(255,80,80,.3); box-shadow: 0 0 8px rgba(255,80,80,.45); }
+  100% { background: transparent; }
+}
+.player-coins.coin-gain-anim { animation: coin-gain 0.62s ease-out; }
+.player-coins.coin-lose-anim { animation: coin-lose 0.45s ease-out; }
+
+/* ── VP gain flash ────────────────────────────────── */
+@keyframes vp-gain {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.2); color: #80d8ff; text-shadow: 0 0 10px rgba(78,200,255,.7); }
+  100% { transform: scale(1); color: inherit; text-shadow: none; }
+}
+.player-vp.vp-gain-anim { animation: vp-gain 0.62s ease-out; }
+
+/* ── Card CPU pick lift ───────────────────────────── */
+@keyframes card-lift {
+  0%   { opacity: 1; transform: scale(1) translateY(0);    box-shadow: none; }
+  42%  { opacity: 1; transform: scale(1.1) translateY(-7px);
+         box-shadow: 0 10px 24px rgba(255,85,85,.55), 0 0 0 2px var(--p2-col); }
+  100% { opacity: 0; transform: scale(0.72) translateY(-20px); box-shadow: none; }
+}
+.game-card.cpu-pick-anim {
+  animation: card-lift 0.4s ease-in forwards !important;
+  pointer-events: none !important;
+  z-index: 200 !important;
+}
+
+/* ── Turn indicator change ────────────────────────── */
+@keyframes turn-flash {
+  0%,100% { transform: scale(1); }
+  40%     { transform: scale(1.07); }
+}
+.turn-change-anim { animation: turn-flash 0.32s ease-out; }
+
 /* ══════════════════════════════════════════════════════
    RESPONSIVE — TABLET (820px)
 ══════════════════════════════════════════════════════ */

@@ -149,6 +149,32 @@ let cpuMode      = false;
 let cpuPlayerNum = 2;                  // CPU は常に P2
 const AI_DELAY   = 850;               // ms (思考演出)
 
+// ── Animation state tracking (for change-flash) ────
+const _animPrev = { coins: {1:7, 2:7}, vp: {1:0, 2:0}, res: {1:{}, 2:{}} };
+function initAnimPrev() {
+  if (!G || !G.players) return;
+  _animPrev.coins = { 1: G.players[1].coins, 2: G.players[2].coins };
+  _animPrev.vp    = { 1: liveVP(1), 2: liveVP(2) };
+  _animPrev.res   = { 1: {}, 2: {} };
+}
+/** Flash an element with cls for dur ms (restart-safe) */
+function flashEl(el, cls, dur = 700) {
+  if (!el) return;
+  el.classList.remove(cls);
+  void el.offsetWidth;
+  el.classList.add(cls);
+  setTimeout(() => el.classList.remove(cls), dur);
+}
+/** Show a floating CPU action announcement toast */
+function showActionToast(msg, variant = 'build') {
+  const el = document.getElementById('action-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = `toast-${variant} toast-show`;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.classList.remove('toast-show'); }, 2200);
+}
+
 /** Mulberry32 シード付き擬似乱数 */
 function makePRNG(seed) {
   return function() {
@@ -206,6 +232,7 @@ function initGame(seed) {
   });
 
   renderAll();
+  initAnimPrev();
   startDraftRound();
   addLog('ゲーム開始！ワンダーを選んでください。', 'sys');
 
@@ -503,9 +530,34 @@ function renderTokensBoard() {
 }
 
 function renderZone(n) {
-  const p = G.players[n];
-  document.getElementById(`p${n}-coins`).textContent = p.coins;
-  document.getElementById(`p${n}-vp`).textContent    = liveVP(n);
+  const p        = G.players[n];
+  const newCoins = p.coins;
+  const newVP    = liveVP(n);
+
+  // Coin display + flash
+  const coinSpan = document.getElementById(`p${n}-coins`);
+  if (coinSpan) {
+    const prev = _animPrev.coins[n];
+    if (prev !== undefined && newCoins !== prev) {
+      const parent = coinSpan.closest('.player-coins');
+      if (parent) flashEl(parent, newCoins > prev ? 'coin-gain-anim' : 'coin-lose-anim', newCoins > prev ? 700 : 500);
+    }
+    coinSpan.textContent = newCoins;
+    _animPrev.coins[n] = newCoins;
+  }
+
+  // VP display + flash
+  const vpSpan = document.getElementById(`p${n}-vp`);
+  if (vpSpan) {
+    const prev = _animPrev.vp[n];
+    if (prev !== undefined && newVP > prev) {
+      const parent = vpSpan.closest('.player-vp');
+      if (parent) flashEl(parent, 'vp-gain-anim', 700);
+    }
+    vpSpan.textContent = newVP;
+    _animPrev.vp[n] = newVP;
+  }
+
   renderTableau(n);
   renderWonders(n);
   renderPlayerTokens(n);
@@ -515,12 +567,16 @@ function renderZone(n) {
 function renderResources(n) {
   if (!G.players) return;
   const { fixed } = getRes(n);
+  const prev = _animPrev.res[n];
   ['wood','stone','clay','ore','glass','papyrus'].forEach(r => {
     const el = document.getElementById(`p${n}-res-${r}`);
     if (!el) return;
-    const v = fixed[r] || 0;
+    const v    = fixed[r] || 0;
+    const chip = el.closest('.res-chip');
+    if (chip && prev[r] !== undefined && v > prev[r]) flashEl(chip, 'rc-gain-anim', 650);
     el.textContent = v;
-    el.closest('.res-chip').classList.toggle('rc-zero', v === 0);
+    if (chip) chip.classList.toggle('rc-zero', v === 0);
+    prev[r] = v;
   });
 }
 
@@ -606,11 +662,14 @@ function updateTurnLabel() {
   el.style.color = '';
   if (G.phase !== 'play') { el.textContent = ''; el.className = ''; return; }
   if (cpuMode && G.turn === cpuPlayerNum) {
-    el.textContent = 'CPU 思考中…';
+    el.innerHTML = 'CPU 思考中<span class="think-dot"></span><span class="think-dot"></span><span class="think-dot"></span>';
     el.className = 'cpu-thinking';
   } else {
-    el.textContent = `Player ${G.turn} のターン`;
+    const newText = `Player ${G.turn} のターン`;
+    const changed = el.textContent !== newText;
+    el.textContent = newText;
     el.className = G.turn === 1 ? 'p1-turn' : 'p2-turn';
+    if (changed) flashEl(el, 'turn-change-anim', 380);
   }
 }
 
@@ -1768,18 +1827,26 @@ function aiTakeTurn() {
 
   setTimeout(() => {
     if (G.phase !== 'play' || G.turn !== cpuPlayerNum) return;
+    // Find card element for lift animation
+    const cardEl   = document.querySelector(`[data-lid="${best.card._lid}"]`);
+    const pickDely = cardEl ? 390 : 0;
+    if (cardEl) cardEl.classList.add('cpu-pick-anim');
+
     switch (best.type) {
       case 'build':
+        showActionToast(`🏗️ CPU「${best.card.nameJP}」を建設`, 'build');
         G.selectedCard = best.card;
-        doBuild();
+        setTimeout(() => doBuild(), pickDely);
         break;
       case 'sell':
+        showActionToast(`💰 CPU「${best.card.nameJP}」を売却`, 'sell');
         G.selectedCard = best.card;
-        doSell();
+        setTimeout(() => doSell(), pickDely);
         break;
       case 'wonder':
+        showActionToast(`✨ CPU「${best.wonder.nameJP}」ワンダーを建設`, 'wonder');
         G.pendingCard = best.card;
-        doBuildWonder(best.wonder);
+        setTimeout(() => doBuildWonder(best.wonder), pickDely);
         break;
     }
   }, AI_DELAY + Math.floor(_rng() * 400));
@@ -1848,6 +1915,7 @@ function aiPickDestroyAuto(targets, ctx) {
     if (s > bestS) { bestS = s; best = card; }
   });
   if (!best) return;
+  showActionToast(`⚔️ CPU が「${best.nameJP}」を破壊！`, 'destroy');
   setTimeout(() => {
     const { victimN, playAgain, loot, attackerN } = ctx;
     G.players[victimN].builtCards = G.players[victimN].builtCards.filter(c => c !== best);
@@ -1874,6 +1942,7 @@ function aiPickDiscardAuto(n) {
     if (s > bestS) { bestS = s; best = card; }
   });
   if (!best) return;
+  showActionToast(`♻️ CPU「${best.nameJP}」捨て札から建設`, 'build');
   setTimeout(() => {
     G.discard = G.discard.filter(c => c !== best);
     G.players[n].builtCards.push(best);
