@@ -1952,10 +1952,11 @@ document.getElementById('btn-play-again').addEventListener('click', () => {
   document.getElementById('victory-overlay').classList.add('hidden');
   initGame();
 });
-document.getElementById('btn-rules').addEventListener('click', () => {
+function openRules() {
   document.getElementById('rules-body').innerHTML = getRulesHTML();
   document.getElementById('rules-overlay').classList.remove('hidden');
-});
+}
+document.getElementById('btn-rules').addEventListener('click', openRules);
 document.getElementById('btn-rules-close').addEventListener('click', () => {
   document.getElementById('rules-overlay').classList.add('hidden');
 });
