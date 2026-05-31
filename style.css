@@ -1264,6 +1264,9 @@ body {
 /* ══════════════════════════════════════════════════════
    RULES MODAL
 ══════════════════════════════════════════════════════ */
+/* ── Rules Overlay — sits above lobby (z-index 100) ── */
+#rules-overlay { z-index: 200; }
+
 /* ── Rules Modal ─── */
 #rules-modal {
   background: linear-gradient(155deg, #1e1a10 0%, #141008 100%);
