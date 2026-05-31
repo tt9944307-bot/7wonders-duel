@@ -276,15 +276,16 @@ body {
 .coin-icon { font-size: 13px; }
 .vp-icon   { font-size: 12px; color: #c8c8ff; }
 
-/* ── Resource bar ──────────────────────────────────── */
+/* ── Resource bar — lives inside .pz-top, wraps to its own line ── */
 .res-bar {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
-  background: rgba(0,0,0,.28);
-  border-top: 1px solid rgba(200,160,60,.10);
+  padding: 1px 0;
+  flex-basis: 100%;   /* forces own line in pz-top's flex-wrap */
   flex-wrap: wrap;
+  border-top: 1px solid rgba(200,160,60,.10);
+  margin-top: 1px;
 }
 .stats-help-btn {
   width: 18px; height: 18px;
