@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7 Wonders Duel</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="game-container">
+
+  <!-- ── Header ─────────────────────────────────────────── -->
+  <header id="game-header">
+    <span id="logo">7 Wonders Duel</span>
+    <div id="age-banner">
+      <span id="age-label">Age I</span>
+      <span id="turn-indicator">Player 1 のターン</span>
+    </div>
+    <span id="mp-indicator" style="display:none;font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(0,0,0,.4)"></span>
+    <button id="btn-new-game">新しいゲーム</button>
+  </header>
+
+  <!-- ── Main (game board + log) ────────────────────────── -->
+  <div id="main-area">
+
+    <!-- ── Player 2 (top) ──────────────────────────────── -->
+    <section id="p2-zone" class="player-zone">
+      <div class="pz-top">
+        <div class="player-name p2-name">Player 2</div>
+        <div id="p2-wonders" class="wonder-row"></div>
+        <div class="player-coins">
+          <span class="coin-icon">🪙</span><span id="p2-coins">7</span>
+        </div>
+        <div class="player-vp">
+          <span class="vp-icon">★</span><span id="p2-vp">0</span> VP
+        </div>
+      </div>
+      <div id="p2-tableau" class="tableau">
+        <div class="tab-col" id="p2-brown"  data-color="brown"></div>
+        <div class="tab-col" id="p2-grey"   data-color="grey"></div>
+        <div class="tab-col" id="p2-yellow" data-color="yellow"></div>
+        <div class="tab-col" id="p2-red"    data-color="red"></div>
+        <div class="tab-col" id="p2-green"  data-color="green"></div>
+        <div class="tab-col" id="p2-blue"   data-color="blue"></div>
+      </div>
+    </section>
+
+    <!-- ── Center ──────────────────────────────────────── -->
+    <section id="center-zone">
+
+      <!-- Military Track -->
+      <div id="military-section">
+        <div id="military-p2-label" class="mil-side-label">← P2 勝利</div>
+        <div id="military-track">
+          <!-- 19 cells rendered by JS: -9 to +9 -->
+        </div>
+        <div id="military-p1-label" class="mil-side-label">P1 勝利 →</div>
+      </div>
+
+      <!-- Progress Tokens -->
+      <div id="progress-section">
+        <div class="section-title">プログレストークン（場）</div>
+        <div id="progress-board"></div>
+      </div>
+
+      <!-- Card Pyramid -->
+      <div id="pyramid-section">
+        <div id="card-layout-wrap">
+          <div id="card-layout">
+            <!-- cards injected by game.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Discard Info -->
+      <div id="discard-bar">
+        <span>捨て札: </span><span id="discard-count">0</span>枚
+      </div>
+
+    </section>
+
+    <!-- ── Player 1 (bottom) ──────────────────────────── -->
+    <section id="p1-zone" class="player-zone">
+      <div id="p1-tableau" class="tableau">
+        <div class="tab-col" id="p1-brown"  data-color="brown"></div>
+        <div class="tab-col" id="p1-grey"   data-color="grey"></div>
+        <div class="tab-col" id="p1-yellow" data-color="yellow"></div>
+        <div class="tab-col" id="p1-red"    data-color="red"></div>
+        <div class="tab-col" id="p1-green"  data-color="green"></div>
+        <div class="tab-col" id="p1-blue"   data-color="blue"></div>
+      </div>
+      <div class="pz-top">
+        <div class="player-vp">
+          <span class="vp-icon">★</span><span id="p1-vp">0</span> VP
+        </div>
+        <div class="player-coins">
+          <span class="coin-icon">🪙</span><span id="p1-coins">7</span>
+        </div>
+        <div id="p1-wonders" class="wonder-row"></div>
+        <div class="player-name p1-name">Player 1</div>
+      </div>
+    </section>
+
+  </div><!-- /#main-area -->
+
+  <!-- ── Game Log ─────────────────────────────────────── -->
+  <aside id="game-log">
+    <div class="log-title">ゲームログ</div>
+    <ul id="log-list"></ul>
+  </aside>
+
+</div><!-- /#game-container -->
+
+
+<!-- ════════════════════════════════════════════════════
+     Modals
+════════════════════════════════════════════════════ -->
+
+<!-- Card Action Modal -->
+<div id="modal-overlay" class="overlay hidden">
+  <div id="card-modal">
+    <div id="modal-preview-wrap"></div>
+    <div id="modal-info">
+      <div id="modal-card-name"></div>
+      <div class="modal-row">
+        <span class="modal-label">コスト</span>
+        <div id="modal-cost"></div>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">効果</span>
+        <div id="modal-effect"></div>
+      </div>
+      <div class="modal-row" id="modal-chain-row">
+        <span class="modal-label">チェーン</span>
+        <div id="modal-chain"></div>
+      </div>
+    </div>
+    <div id="modal-buttons">
+      <button class="mbutton build"   id="btn-build">建設</button>
+      <button class="mbutton sell"    id="btn-sell">売却 +2🪙</button>
+      <button class="mbutton wonder"  id="btn-wonder">ワンダー建設</button>
+      <button class="mbutton cancel"  id="btn-cancel">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- Wonder Draft Modal -->
+<div id="draft-overlay" class="overlay hidden">
+  <div id="draft-modal">
+    <div id="draft-title">ワンダーを選んでください</div>
+    <div id="draft-sub"></div>
+    <div id="draft-cards"></div>
+  </div>
+</div>
+
+<!-- Victory Screen -->
+<div id="victory-overlay" class="overlay hidden">
+  <div id="victory-modal">
+    <div id="victory-title"></div>
+    <div id="victory-reason"></div>
+    <div id="victory-scores"></div>
+    <button id="btn-play-again">もう一度プレイ</button>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div id="tooltip" class="hidden"></div>
+
+<!-- ── Multiplayer Lobby ──────────────────────────── -->
+<div id="mp-overlay" class="overlay hidden">
+  <div id="mp-modal">
+    <div id="mp-title">🏛 7 Wonders Duel</div>
+    <div id="mp-subtitle">対戦モードを選択してください</div>
+
+    <div id="mp-modes">
+      <!-- Local -->
+      <button class="mp-mode-btn" id="btn-local">
+        <div class="mp-mode-icon">🖥</div>
+        <div class="mp-mode-label">ローカル対戦</div>
+        <div class="mp-mode-desc">同じ端末で2人プレイ</div>
+      </button>
+
+      <!-- Online Host -->
+      <button class="mp-mode-btn" id="btn-host">
+        <div class="mp-mode-icon">📡</div>
+        <div class="mp-mode-label">ルームを作成</div>
+        <div class="mp-mode-desc">ルームコードを相手に教える</div>
+      </button>
+
+      <!-- Online Join -->
+      <button class="mp-mode-btn" id="btn-join-open">
+        <div class="mp-mode-icon">🔗</div>
+        <div class="mp-mode-label">ルームに参加</div>
+        <div class="mp-mode-desc">コードを入力して参加</div>
+      </button>
+    </div>
+
+    <!-- Host panel -->
+    <div id="mp-host-panel" class="mp-panel hidden">
+      <div id="mp-room-code-wrap" class="hidden">
+        <div class="mp-label">ルームコード</div>
+        <div id="mp-room-display" class="mp-code-big"></div>
+        <button id="btn-copy-code" class="mp-small-btn">📋 コピー</button>
+      </div>
+      <div id="mp-waiting-msg" class="mp-wait-msg hidden">⏳ 相手の接続を待っています…</div>
+    </div>
+
+    <!-- Join panel -->
+    <div id="mp-join-panel" class="mp-panel hidden">
+      <div class="mp-label">ルームコードを入力</div>
+      <div class="mp-join-row">
+        <input id="mp-room-input" class="mp-input" placeholder="XXXXXX" maxlength="6" autocomplete="off" />
+        <button id="btn-join-room" class="mp-small-btn">参加</button>
+      </div>
+    </div>
+
+    <div id="mp-status" class="mp-status-msg"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="data.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
