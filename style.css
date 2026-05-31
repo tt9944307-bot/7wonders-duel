@@ -312,7 +312,8 @@ body {
 .rc-ore     { background:rgba(55,60,80,.65);  color:#a0b4c8; border:1px solid rgba(120,145,170,.35); }
 .rc-glass   { background:rgba(18,75,140,.60); color:#80c4f4; border:1px solid rgba(55,140,225,.35); }
 .rc-papyrus { background:rgba(95,88,18,.60);  color:#d4cc40; border:1px solid rgba(180,165,35,.35); }
-.res-chip.rc-zero { opacity:.30; }
+.res-chip.rc-zero { opacity:.55; }
+.res-chip.rc-zero .rc-count { color: rgba(255,255,255,.35); }
 
 /* ── Stats help bottom-sheet ───────────────────────── */
 .sh-overlay {
