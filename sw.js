@@ -2,7 +2,7 @@
  * Service Worker — 7 Wonders Duel PWA
  * Strategy: Cache-first for local assets, network-only for CDN
  */
-const CACHE = '7wd-v1';
+const CACHE = '7wd-v2';
 
 const LOCAL_ASSETS = [
   './',
