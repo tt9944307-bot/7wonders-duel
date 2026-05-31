@@ -611,11 +611,12 @@ function showWonderBuildPicker() {
     const cr = calcCost(w, G.turn);
     const el = document.createElement('div');
     el.className = 'draft-card';
-    el.style.opacity = cr.canAfford ? '1' : '0.5';
+    el.style.opacity    = cr.canAfford ? '1' : '0.42';
+    el.style.cursor     = cr.canAfford ? '' : 'not-allowed';
     el.innerHTML = `<div class="draft-card-name">${w.nameJP}</div>
       <div class="draft-card-cost">${costHTML(w.cost)}</div>
       <div style="font-size:11px;color:${cr.canAfford?'var(--green-l)':'var(--red-l)'}">
-        ${cr.canAfford ? `建設（${cr.cost}🪙）` : `不足（${cr.cost}🪙）`}
+        ${cr.canAfford ? `建設（${cr.cost}🪙）` : `💸 コイン不足（必要 ${cr.cost}🪙）`}
       </div>
       <div class="draft-card-effect">${fxText(w.effect)}</div>`;
     if (cr.canAfford) el.onclick = () => {
@@ -625,21 +626,24 @@ function showWonderBuildPicker() {
     };
     cards.appendChild(el);
   });
-  // Cancel — separate from the wonder cards, shown below them
-  const cancelWrap = document.createElement('div');
-  cancelWrap.style.cssText = 'grid-column:1/-1;display:flex;justify-content:center;margin-top:4px';
+
+  // Cancel button goes in #draft-hint (flex-shrink:0) — always visible,
+  // never hidden by the scrollable card area on small screens.
+  const hint = document.getElementById('draft-hint');
+  hint.innerHTML = '';
   const cx = document.createElement('button');
   cx.id = 'btn-wonder-cancel';
   cx.className = 'mbutton cancel';
   cx.textContent = 'キャンセル';
+  cx.style.cssText = 'display:block;margin:6px auto 2px;min-width:120px';
   cx.onclick = () => {
     document.getElementById('draft-overlay').classList.add('hidden');
+    hint.innerHTML = '';          // restore hint to clean state
     G.selectedCard = G.pendingCard;
-    G.pendingCard = null;
+    G.pendingCard  = null;
     openCardModal(G.selectedCard);
   };
-  cancelWrap.appendChild(cx);
-  cards.appendChild(cancelWrap);
+  hint.appendChild(cx);
   document.getElementById('draft-overlay').classList.remove('hidden');
 }
 
