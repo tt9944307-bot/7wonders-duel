@@ -1,165 +1,81 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <!-- Background warm glow from bottom -->
-    <radialGradient id="bg" cx="50%" cy="75%" r="70%">
-      <stop offset="0%"   stop-color="#5a3010" stop-opacity=".95"/>
-      <stop offset="45%"  stop-color="#241808" stop-opacity=".60"/>
-      <stop offset="100%" stop-color="#0e0a06" stop-opacity="0"/>
+    <radialGradient id="bg" cx="50%" cy="55%" r="65%">
+      <stop offset="0%"   stop-color="#3a2608" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#0a0806" stop-opacity="1"/>
     </radialGradient>
-    <!-- Cool glow above pyramid (mystery/depth) -->
-    <radialGradient id="top-glow" cx="50%" cy="25%" r="50%">
-      <stop offset="0%"   stop-color="#0a1830" stop-opacity=".80"/>
-      <stop offset="100%" stop-color="#0e0a06" stop-opacity="0"/>
-    </radialGradient>
-    <!-- Gold gradient line -->
-    <linearGradient id="gl" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%"   stop-color="#e0b428" stop-opacity="0"/>
-      <stop offset="30%"  stop-color="#e0b428" stop-opacity=".90"/>
-      <stop offset="70%"  stop-color="#e0b428" stop-opacity=".90"/>
+    <radialGradient id="glow7" cx="50%" cy="45%" r="55%">
+      <stop offset="0%"   stop-color="#e0b428" stop-opacity=".28"/>
       <stop offset="100%" stop-color="#e0b428" stop-opacity="0"/>
-    </linearGradient>
-    <!-- Card shadow filter -->
-    <filter id="cardshadow" x="-5%" y="-5%" width="115%" height="120%">
-      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000" flood-opacity=".55"/>
-    </filter>
-    <!-- Gold glow filter for "7" -->
-    <filter id="glow7" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="9" result="b"/>
+    </radialGradient>
+    <filter id="f7" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14" result="b"/>
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
+    <linearGradient id="stripe" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="rgba(255,255,255,.18)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
   </defs>
 
-  <!-- ── Background ── -->
-  <rect width="512" height="512" rx="90" fill="#0e0a06"/>
-  <rect width="512" height="512" rx="90" fill="url(#bg)"/>
-  <rect width="512" height="512" rx="90" fill="url(#top-glow)"/>
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <!-- Glow behind "7" -->
+  <rect width="512" height="512" rx="96" fill="url(#glow7)"/>
 
-  <!-- Scattered stars -->
-  <circle cx="62"  cy="66"  r="2.0" fill="#e0b428" opacity=".50"/>
-  <circle cx="145" cy="42"  r="1.5" fill="#e0b428" opacity=".35"/>
-  <circle cx="368" cy="52"  r="1.8" fill="#e0b428" opacity=".42"/>
-  <circle cx="448" cy="88"  r="1.4" fill="#e0b428" opacity=".30"/>
-  <circle cx="58"  cy="420" r="1.6" fill="#e0b428" opacity=".25"/>
-  <circle cx="452" cy="398" r="2.0" fill="#e0b428" opacity=".28"/>
-  <circle cx="472" cy="178" r="1.2" fill="#e0b428" opacity=".20"/>
-  <circle cx="44"  cy="260" r="1.4" fill="#e0b428" opacity=".18"/>
-  <circle cx="258" cy="100" r="1.2" fill="#e0b428" opacity=".22"/>
+  <!-- Subtle star dots -->
+  <circle cx="72"  cy="72"  r="2.5" fill="#e8c040" opacity=".55"/>
+  <circle cx="440" cy="88"  r="2"   fill="#e8c040" opacity=".40"/>
+  <circle cx="460" cy="200" r="1.5" fill="#e8c040" opacity=".28"/>
+  <circle cx="52"  cy="200" r="1.5" fill="#e8c040" opacity=".28"/>
+  <circle cx="130" cy="44"  r="1.5" fill="#e8c040" opacity=".32"/>
+  <circle cx="380" cy="52"  r="2"   fill="#e8c040" opacity=".38"/>
 
-  <!-- ══════════════════════════════════════════
-       PYRAMID  (lobby SVG scaled ×1.815, x+20, y+178)
-       Source viewBox: 260×86
-       Bottom row : y=50→269, h=36→65
-       Middle row : y=25→223, h=36→65
-       Top row    : y= 0→178, h=36→65
-       Card width : 44→80, gap stride: 54→98
-  ══════════════════════════════════════════ -->
-
-  <!-- ── TOP ROW — 2 face-down (darkest) ── -->
-  <g filter="url(#cardshadow)">
-    <!-- x: 81*1.815+20=167, 135*1.815+20=265 -->
-    <rect x="167" y="178" width="80" height="65" rx="6" fill="#080e1c"/>
-    <rect x="265" y="178" width="80" height="65" rx="6" fill="#080e1c"/>
-    <!-- Stripe lines -->
-    <line x1="175" y1="192" x2="239" y2="192" stroke="#12213a" stroke-width="2"/>
-    <line x1="175" y1="205" x2="239" y2="205" stroke="#12213a" stroke-width="1.5"/>
-    <line x1="175" y1="218" x2="239" y2="218" stroke="#12213a" stroke-width="1.5"/>
-    <line x1="273" y1="192" x2="337" y2="192" stroke="#12213a" stroke-width="2"/>
-    <line x1="273" y1="205" x2="337" y2="205" stroke="#12213a" stroke-width="1.5"/>
-    <line x1="273" y1="218" x2="337" y2="218" stroke="#12213a" stroke-width="1.5"/>
-    <!-- Borders -->
-    <rect x="167" y="178" width="80" height="65" rx="6" fill="none" stroke="#1a2e50" stroke-width="1.5"/>
-    <rect x="265" y="178" width="80" height="65" rx="6" fill="none" stroke="#1a2e50" stroke-width="1.5"/>
+  <!-- ── "7" — giant, bold, golden ── -->
+  <g filter="url(#f7)">
+    <text
+      x="258" y="295"
+      font-family="Georgia,'Times New Roman',serif"
+      font-size="320" font-weight="900"
+      fill="#e8c040"
+      text-anchor="middle"
+      dominant-baseline="alphabetic">7</text>
   </g>
 
-  <!-- ── MIDDLE ROW — 4 face-down ── -->
-  <g filter="url(#cardshadow)">
-    <!-- x: 27*1.815+20=69, 81→167, 135→265, 189*1.815+20=363 -->
-    <rect x="69"  y="223" width="80" height="65" rx="6" fill="#0e1828"/>
-    <rect x="167" y="223" width="80" height="65" rx="6" fill="#0e1828"/>
-    <rect x="265" y="223" width="80" height="65" rx="6" fill="#0e1828"/>
-    <rect x="363" y="223" width="80" height="65" rx="6" fill="#0e1828"/>
-    <!-- Stripe lines -->
-    <line x1="77"  y1="236" x2="141" y2="236" stroke="#1c2e48" stroke-width="2"/>
-    <line x1="77"  y1="249" x2="141" y2="249" stroke="#1c2e48" stroke-width="1.5"/>
-    <line x1="77"  y1="262" x2="141" y2="262" stroke="#1c2e48" stroke-width="1.5"/>
-    <line x1="175" y1="236" x2="239" y2="236" stroke="#1c2e48" stroke-width="2"/>
-    <line x1="175" y1="249" x2="239" y2="249" stroke="#1c2e48" stroke-width="1.5"/>
-    <line x1="175" y1="262" x2="239" y2="262" stroke="#1c2e48" stroke-width="1.5"/>
-    <line x1="273" y1="236" x2="337" y2="236" stroke="#1c2e48" stroke-width="2"/>
-    <line x1="273" y1="249" x2="337" y2="249" stroke="#1c2e48" stroke-width="1.5"/>
-    <line x1="273" y1="262" x2="337" y2="262" stroke="#1c2e48" stroke-width="1.5"/>
-    <line x1="371" y1="236" x2="435" y2="236" stroke="#1c2e48" stroke-width="2"/>
-    <line x1="371" y1="249" x2="435" y2="249" stroke="#1c2e48" stroke-width="1.5"/>
-    <line x1="371" y1="262" x2="435" y2="262" stroke="#1c2e48" stroke-width="1.5"/>
-    <!-- Borders -->
-    <rect x="69"  y="223" width="80" height="65" rx="6" fill="none" stroke="#1e3254" stroke-width="1.5"/>
-    <rect x="167" y="223" width="80" height="65" rx="6" fill="none" stroke="#1e3254" stroke-width="1.5"/>
-    <rect x="265" y="223" width="80" height="65" rx="6" fill="none" stroke="#1e3254" stroke-width="1.5"/>
-    <rect x="363" y="223" width="80" height="65" rx="6" fill="none" stroke="#1e3254" stroke-width="1.5"/>
-  </g>
+  <!-- ── 5-card colour strip at bottom ── -->
+  <!-- Card height: 72, width: each fills 1/5 of 512 minus gaps -->
+  <!-- Total gap: 4 gaps × 6px = 24px, each card = (512-24)/5 = 97.6 → 97px, adjusted -->
+  <!-- Actually: 5 cards × 96px + 4 gaps × 8px = 480 + 32 = 512 → x start = 0 -->
 
-  <!-- ── BOTTOM ROW — 5 face-up colored ── -->
-  <g filter="url(#cardshadow)">
-    <!-- x: 0*1.815+20=20, 54→118, 108→216, 162→314, 216→412 -->
+  <!-- Card 1: orange-brown -->
+  <rect x="4"   y="414" width="93" height="80" rx="10" fill="#c86830"/>
+  <rect x="4"   y="414" width="93" height="22" rx="10" fill="url(#stripe)"/>
+  <rect x="4"   y="414" width="93" height="80" rx="10" fill="none" stroke="rgba(255,200,130,.45)" stroke-width="2"/>
 
-    <!-- Card 1: Orange-brown -->
-    <rect x="20"  y="269" width="80" height="65" rx="7" fill="#c06830"/>
-    <rect x="20"  y="269" width="80" height="15" rx="7" fill="rgba(255,210,160,.28)"/>
-    <rect x="28"  y="302" width="38" height="6"  rx="3" fill="rgba(255,255,255,.40)"/>
-    <rect x="28"  y="314" width="26" height="5"  rx="2" fill="rgba(255,255,255,.25)"/>
-    <rect x="20"  y="269" width="80" height="65" rx="7" fill="none" stroke="rgba(255,200,130,.35)" stroke-width="1.5"/>
+  <!-- Card 2: blue -->
+  <rect x="105" y="414" width="93" height="80" rx="10" fill="#1e6ab8"/>
+  <rect x="105" y="414" width="93" height="22" rx="10" fill="url(#stripe)"/>
+  <rect x="105" y="414" width="93" height="80" rx="10" fill="none" stroke="rgba(100,190,255,.45)" stroke-width="2"/>
 
-    <!-- Card 2: Blue -->
-    <rect x="118" y="269" width="80" height="65" rx="7" fill="#1e68b4"/>
-    <rect x="118" y="269" width="80" height="15" rx="7" fill="rgba(150,220,255,.22)"/>
-    <rect x="126" y="302" width="38" height="6"  rx="3" fill="rgba(255,255,255,.40)"/>
-    <rect x="126" y="314" width="26" height="5"  rx="2" fill="rgba(255,255,255,.25)"/>
-    <rect x="118" y="269" width="80" height="65" rx="7" fill="none" stroke="rgba(100,180,255,.35)" stroke-width="1.5"/>
+  <!-- Card 3: green -->
+  <rect x="206" y="414" width="100" height="80" rx="10" fill="#1a9048"/>
+  <rect x="206" y="414" width="100" height="22" rx="10" fill="url(#stripe)"/>
+  <rect x="206" y="414" width="100" height="80" rx="10" fill="none" stroke="rgba(80,230,140,.45)" stroke-width="2"/>
 
-    <!-- Card 3: Green -->
-    <rect x="216" y="269" width="80" height="65" rx="7" fill="#1a8842"/>
-    <rect x="216" y="269" width="80" height="15" rx="7" fill="rgba(150,255,190,.22)"/>
-    <rect x="224" y="302" width="38" height="6"  rx="3" fill="rgba(255,255,255,.40)"/>
-    <rect x="224" y="314" width="26" height="5"  rx="2" fill="rgba(255,255,255,.25)"/>
-    <rect x="216" y="269" width="80" height="65" rx="7" fill="none" stroke="rgba(100,220,140,.35)" stroke-width="1.5"/>
+  <!-- Card 4: red -->
+  <rect x="314" y="414" width="93" height="80" rx="10" fill="#c02222"/>
+  <rect x="314" y="414" width="93" height="22" rx="10" fill="url(#stripe)"/>
+  <rect x="314" y="414" width="93" height="80" rx="10" fill="none" stroke="rgba(255,110,110,.45)" stroke-width="2"/>
 
-    <!-- Card 4: Red -->
-    <rect x="314" y="269" width="80" height="65" rx="7" fill="#b82222"/>
-    <rect x="314" y="269" width="80" height="15" rx="7" fill="rgba(255,160,160,.20)"/>
-    <rect x="322" y="302" width="38" height="6"  rx="3" fill="rgba(255,255,255,.40)"/>
-    <rect x="322" y="314" width="26" height="5"  rx="2" fill="rgba(255,255,255,.25)"/>
-    <rect x="314" y="269" width="80" height="65" rx="7" fill="none" stroke="rgba(255,100,100,.35)" stroke-width="1.5"/>
+  <!-- Card 5: purple -->
+  <rect x="415" y="414" width="93" height="80" rx="10" fill="#7828c0"/>
+  <rect x="415" y="414" width="93" height="22" rx="10" fill="url(#stripe)"/>
+  <rect x="415" y="414" width="93" height="80" rx="10" fill="none" stroke="rgba(200,120,255,.45)" stroke-width="2"/>
 
-    <!-- Card 5: Purple -->
-    <rect x="412" y="269" width="80" height="65" rx="7" fill="#7022b0"/>
-    <rect x="412" y="269" width="80" height="15" rx="7" fill="rgba(200,150,255,.20)"/>
-    <rect x="420" y="302" width="38" height="6"  rx="3" fill="rgba(255,255,255,.40)"/>
-    <rect x="420" y="314" width="26" height="5"  rx="2" fill="rgba(255,255,255,.25)"/>
-    <rect x="412" y="269" width="80" height="65" rx="7" fill="none" stroke="rgba(180,100,255,.35)" stroke-width="1.5"/>
-  </g>
+  <!-- Gold separator line above cards -->
+  <rect x="4" y="408" width="504" height="3" rx="1.5" fill="#e8c040" opacity=".55"/>
 
-  <!-- ── Gold glow + line at base of pyramid ── -->
-  <ellipse cx="256" cy="348" rx="220" ry="16" fill="#e0b428" opacity=".16"/>
-  <line x1="40" y1="350" x2="472" y2="350" stroke="url(#gl)" stroke-width="2.5"/>
-
-  <!-- ── "7" numeral ── -->
-  <g filter="url(#glow7)">
-    <text x="256" y="140"
-          font-family="Georgia,'Times New Roman',serif"
-          font-size="88" font-weight="900"
-          fill="#ecc040"
-          text-anchor="middle" dominant-baseline="middle">7</text>
-  </g>
-
-  <!-- ── Subtle "WD" tagline below pyramid ── -->
-  <text x="256" y="410"
-        font-family="'Arial Narrow',Arial,sans-serif"
-        font-size="24" font-weight="700"
-        fill="rgba(200,160,40,.45)"
-        text-anchor="middle" dominant-baseline="middle"
-        letter-spacing="12">WD</text>
-
-  <!-- ── Border ring ── -->
-  <rect x="3" y="3" width="506" height="506" rx="88"
-        fill="none" stroke="rgba(200,155,40,.30)" stroke-width="3"/>
+  <!-- Border -->
+  <rect x="3" y="3" width="506" height="506" rx="94"
+        fill="none" stroke="rgba(220,170,40,.35)" stroke-width="3.5"/>
 </svg>
