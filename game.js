@@ -131,6 +131,63 @@ function startDraftRound() {
   showDraftModal();
 }
 
+function getDraftHintHTML(pick) {
+  // Draft order: [1,2,2,1,  2,1,1,2]
+  // pick 0-3 = set 1,  pick 4-7 = set 2
+  const isSet2 = pick >= 4;
+  const localPick = pick % 4; // position within the current set
+
+  // Build order indicator for current set
+  // Set1 order: P1 P2 P2 P1,  Set2 order: P2 P1 P1 P2
+  const set1 = [1,2,2,1];
+  const set2 = [2,1,1,2];
+  const order = isSet2 ? set2 : set1;
+  const orderHTML = order.map((p, i) => {
+    const isCurrent = i === localPick;
+    const cls = `dh-turn dh-p${p}${isCurrent ? ' dh-current' : ''}`;
+    return `<span class="${cls}">P${p}</span>`;
+  }).join('<span class="dh-arrow">→</span>');
+
+  const setLabel = isSet2
+    ? `<span class="dh-badge dh-set2">セット 2 / 2</span>`
+    : `<span class="dh-badge dh-set1">セット 1 / 2</span>`;
+
+  const setNote = isSet2
+    ? '4枚の新しいワンダーセット。今度はP2から先手です。'
+    : '4枚のワンダーから選びます。全員が選び終わったら新セットへ。';
+
+  return `
+<div class="draft-hint-box">
+  <div class="dh-section">
+    <div class="dh-heading">🏛 ワンダーとは？</div>
+    <div class="dh-text">
+      ゲーム中に「<strong>ワンダー建設</strong>」アクションを使うと建設できる<strong>特別な建物</strong>です。
+      建設すると強力な効果が1回発動します（追加ターン・相手コイン削り・捨て札から建設など）。
+      VP も大きく、<strong>勝敗を左右する切り札</strong>になります。各ワンダーは1回のみ建設可能。
+    </div>
+  </div>
+  <div class="dh-divider"></div>
+  <div class="dh-section">
+    <div class="dh-heading">🤔 選び方のポイント</div>
+    <div class="dh-text">
+      カードに表示された <strong>建設コスト（資源アイコン）</strong> と <strong>効果</strong> を確認しましょう。
+      コストが低い・効果が強い・VPが高いものを優先するのが基本です。
+      迷ったら VP の数字が大きいものを選ぶのが無難です。
+    </div>
+  </div>
+  <div class="dh-divider"></div>
+  <div class="dh-section">
+    <div class="dh-order-row">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        ${setLabel}
+        <span class="dh-text" style="margin:0">${setNote}</span>
+      </div>
+      <div class="dh-order">${orderHTML}</div>
+    </div>
+  </div>
+</div>`;
+}
+
 function showDraftModal() {
   const pNum  = DRAFT_ORDER[G.draftPick];
   const ov    = document.getElementById('draft-overlay');
@@ -150,6 +207,7 @@ function showDraftModal() {
 
   document.getElementById('draft-title').textContent = `Player ${pNum} — ワンダーを選択`;
   document.getElementById('draft-sub').textContent   = `(${8 - G.draftPick}回 残り)`;
+  document.getElementById('draft-hint').innerHTML    = getDraftHintHTML(G.draftPick);
   const cards = document.getElementById('draft-cards');
   cards.innerHTML = '';
   G.draftPool.filter(w => !w.picked).forEach(w => {
