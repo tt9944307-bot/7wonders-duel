@@ -38,6 +38,99 @@ const TOKEN_ICON = {
   theology: _ti('<line x1="10" y1="3" x2="10" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'),
   urbanism: _ti('<rect x="2" y="10" width="5" height="8" stroke="currentColor" stroke-width="1.4"/><rect x="13" y="6" width="5" height="12" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="13" width="6" height="5" stroke="currentColor" stroke-width="1.4"/><line x1="2" y1="18" x2="18" y2="18" stroke="currentColor" stroke-width="1.4"/>')
 };
+// ── Card Artwork — ancient engraving line-art, 32×32 viewBox ──────────
+const _ca = (d) => `<svg class="card-art-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">${d}</svg>`;
+
+const CARD_ART = {
+  // ── Raw Materials ─────────────────────────────────────────────────
+  wood:    _ca(`<path d="M16 27V20" stroke-width="2"/><path d="M7 19L16 9L25 19Z" stroke-width="1.4"/><path d="M10 23L16 15L22 23Z" stroke-width="1.4"/><line x1="13" y1="27" x2="19" y2="27" stroke-width="2"/>`),
+  stone:   _ca(`<path d="M12 8H20V10H12Z" stroke-width="1.3"/><path d="M12 10L11.5 25H20.5L20 10" stroke-width="1.3"/><line x1="14.7" y1="10" x2="14.7" y2="25" stroke-width="0.9" stroke-dasharray="2 2.5"/><line x1="17.3" y1="10" x2="17.3" y2="25" stroke-width="0.9" stroke-dasharray="2 2.5"/><path d="M9.5 25H22.5V27H9.5Z" stroke-width="1.3"/>`),
+  clay:    _ca(`<rect x="7" y="23" width="6" height="3.5" stroke-width="1.2"/><rect x="14" y="23" width="6" height="3.5" stroke-width="1.2"/><rect x="21" y="23" width="4" height="3.5" stroke-width="1.2"/><rect x="10" y="18.5" width="6" height="3.5" stroke-width="1.2"/><rect x="17" y="18.5" width="6" height="3.5" stroke-width="1.2"/><rect x="13" y="14" width="6" height="3.5" stroke-width="1.2"/><rect x="7" y="14" width="5" height="3.5" stroke-width="1.2"/>`),
+  ore:     _ca(`<polygon points="16,8 21.5,12 23,18.5 19.5,23.5 12.5,23.5 9,18.5 10.5,12" stroke-width="1.4"/><line x1="16" y1="8" x2="16.5" y2="13" stroke-width="0.9"/><line x1="21.5" y1="12" x2="17.5" y2="14.5" stroke-width="0.9"/><line x1="23" y1="18.5" x2="18" y2="17.5" stroke-width="0.9"/><line x1="19.5" y1="23.5" x2="17.5" y2="19.5" stroke-width="0.9"/><line x1="12.5" y1="23.5" x2="14.5" y2="19.5" stroke-width="0.9"/><line x1="9" y1="18.5" x2="14" y2="17.5" stroke-width="0.9"/><line x1="10.5" y1="12" x2="14.5" y2="14.5" stroke-width="0.9"/><circle cx="16" cy="17" r="2.5" stroke-width="1.2"/>`),
+  glass:   _ca(`<path d="M16 7L8 19H24Z" stroke-width="1.4"/><line x1="16" y1="7" x2="12" y2="13" stroke-width="0.9" opacity="0.7"/><line x1="16" y1="7" x2="20" y2="13" stroke-width="0.9" opacity="0.7"/><line x1="10.5" y1="15" x2="14" y2="13" stroke-width="0.8" opacity="0.55"/><line x1="21.5" y1="15" x2="18" y2="13" stroke-width="0.8" opacity="0.55"/><path d="M8 19L12 25.5L16 19L20 25.5L24 19" stroke-width="1.3"/>`),
+  papyrus: _ca(`<path d="M10 7C9 7 8 8 9 10.5C10 13 9 22 10 24L11.5 25.5H20.5L22 24C23 22 22 13 23 10.5C24 8 23 7 22 7H10Z" stroke-width="1.3"/><line x1="13" y1="12" x2="19" y2="12" stroke-width="1"/><line x1="13" y1="15" x2="19" y2="15" stroke-width="1"/><line x1="13" y1="18" x2="17" y2="18" stroke-width="1"/><line x1="13" y1="21" x2="15.5" y2="21" stroke-width="1"/>`),
+  // ── Military ──────────────────────────────────────────────────────
+  shield:  _ca(`<path d="M16 6L27 10.5V18.5C27 24 16 28 16 28C16 28 5 24 5 18.5V10.5Z" stroke-width="1.5"/><path d="M16 11L22 13.5V18C22 21.5 16 23.5 16 23.5C16 23.5 10 21.5 10 18V13.5Z" stroke-width="1.1" opacity="0.65"/>`),
+  crossed_swords: _ca(`<line x1="7" y1="25" x2="23" y2="9" stroke-width="1.5"/><line x1="25" y1="25" x2="9" y2="9" stroke-width="1.5"/><path d="M5.5 26.5L8 24" stroke-width="2.2"/><path d="M26.5 26.5L24 24" stroke-width="2.2"/><path d="M8.5 8L11 10.5" stroke-width="2"/><path d="M23.5 8L21 10.5" stroke-width="2"/><circle cx="16" cy="17" r="2.5" stroke-width="1.3"/>`),
+  tower:   _ca(`<rect x="10" y="8" width="12" height="18" stroke-width="1.4"/><path d="M10 8V5.5H12.5V8M15 5.5V8M17.5 8V5.5H20V8" stroke-width="1.3"/><rect x="13.5" y="19" width="5" height="7" stroke-width="1.2"/><line x1="10" y1="13" x2="22" y2="13" stroke-width="1.1"/>`),
+  bow:     _ca(`<path d="M10 7C10 7 6.5 11.5 6.5 16.5C6.5 21.5 10 25 10 25" stroke-width="1.5"/><line x1="10" y1="7" x2="10" y2="25" stroke-width="1.5"/><line x1="10" y1="16.5" x2="24" y2="11" stroke-width="1.3"/><path d="M23 11L26.5 10L25.5 13.5" stroke-width="1.3"/><line x1="23.5" y1="11" x2="10.5" y2="21" stroke-width="0.8" stroke-dasharray="1.5 1.5" opacity="0.6"/>`),
+  wall:    _ca(`<rect x="6" y="7" width="5" height="5" stroke-width="1.3"/><rect x="13.5" y="7" width="5" height="5" stroke-width="1.3"/><rect x="21" y="7" width="5" height="5" stroke-width="1.3"/><rect x="6" y="12" width="20" height="14" stroke-width="1.3"/><line x1="6" y1="17.5" x2="26" y2="17.5" stroke-width="1"/><line x1="6" y1="22" x2="26" y2="22" stroke-width="1"/><line x1="12" y1="12" x2="12" y2="26" stroke-width="1"/><line x1="18" y1="12" x2="18" y2="26" stroke-width="1"/>`),
+  fortress: _ca(`<rect x="5" y="7" width="6" height="19" stroke-width="1.3"/><rect x="21" y="7" width="6" height="19" stroke-width="1.3"/><rect x="11" y="13" width="10" height="13" stroke-width="1.3"/><path d="M5 7V5H7V7M9.5 5V7" stroke-width="1.2"/><path d="M21 7V5H23V7M25.5 5V7" stroke-width="1.2"/><line x1="5" y1="26" x2="27" y2="26" stroke-width="1.5"/>`),
+  // ── Science ───────────────────────────────────────────────────────
+  tablet:  _ca(`<rect x="9" y="5" width="14" height="22" rx="2" stroke-width="1.4"/><line x1="12.5" y1="10" x2="19.5" y2="10" stroke-width="1.1"/><line x1="12.5" y1="13.5" x2="19.5" y2="13.5" stroke-width="1.1"/><line x1="12.5" y1="17" x2="19.5" y2="17" stroke-width="1.1"/><line x1="12.5" y1="20.5" x2="16.5" y2="20.5" stroke-width="1.1"/>`),
+  gear:    _ca(`<circle cx="16" cy="16" r="5.5" stroke-width="1.4"/><circle cx="16" cy="16" r="2" stroke-width="1.2"/><path d="M16 7.5V10.5M16 21.5V24.5M7.5 16H10.5M21.5 16H24.5M9.4 9.4L11.5 11.5M20.5 20.5L22.6 22.6M22.6 9.4L20.5 11.5M11.5 20.5L9.4 22.6" stroke-width="2.2"/>`),
+  compass: _ca(`<circle cx="16" cy="16" r="9" stroke-width="1.4"/><circle cx="16" cy="16" r="1.8" stroke-width="1.2"/><line x1="16" y1="7.5" x2="16" y2="10" stroke-width="1.3"/><line x1="16" y1="22" x2="16" y2="24.5" stroke-width="1.3"/><line x1="7.5" y1="16" x2="10" y2="16" stroke-width="1.3"/><line x1="22" y1="16" x2="24.5" y2="16" stroke-width="1.3"/><path d="M16 8.5L18.5 14.5L16 15.5L13.5 14.5Z" stroke-width="1" fill="currentColor" opacity="0.4"/><path d="M16 23.5L13.5 17.5L16 16.5L18.5 17.5Z" stroke-width="1" fill="currentColor" opacity="0.2"/>`),
+  mortar:  _ca(`<path d="M8 20C8 20 9 27 16 27C23 27 24 20 24 20" stroke-width="1.4"/><ellipse cx="16" cy="20" rx="8" ry="2.5" stroke-width="1.4"/><path d="M12 19.5C12 19.5 13 15 16 13.5C19 12 22 13 22 13" stroke-width="1.2"/><line x1="16" y1="13.5" x2="16" y2="8" stroke-width="1.5"/><path d="M13 11L16 8L19 11" stroke-width="1.3"/>`),
+  wheel:   _ca(`<circle cx="16" cy="16" r="9" stroke-width="1.4"/><circle cx="16" cy="16" r="2.5" stroke-width="1.3"/><line x1="16" y1="7" x2="16" y2="13.5" stroke-width="1.3"/><line x1="16" y1="18.5" x2="16" y2="25" stroke-width="1.3"/><line x1="7" y1="16" x2="13.5" y2="16" stroke-width="1.3"/><line x1="18.5" y1="16" x2="25" y2="16" stroke-width="1.3"/><line x1="9.6" y1="9.6" x2="14.1" y2="14.1" stroke-width="1.3"/><line x1="17.9" y1="17.9" x2="22.4" y2="22.4" stroke-width="1.3"/><line x1="22.4" y1="9.6" x2="17.9" y2="14.1" stroke-width="1.3"/><line x1="14.1" y1="17.9" x2="9.6" y2="22.4" stroke-width="1.3"/>`),
+  astrolabe: _ca(`<circle cx="16" cy="16" r="9" stroke-width="1.4"/><circle cx="16" cy="16" r="5.5" stroke-width="1"/><circle cx="16" cy="16" r="2" stroke-width="1"/><line x1="7" y1="16" x2="25" y2="16" stroke-width="1.2"/><line x1="16" y1="7" x2="16" y2="25" stroke-width="1.2"/><line x1="10.4" y1="10.4" x2="12.2" y2="12.2" stroke-width="0.9"/><line x1="19.8" y1="19.8" x2="21.6" y2="21.6" stroke-width="0.9"/><line x1="21.6" y1="10.4" x2="19.8" y2="12.2" stroke-width="0.9"/><line x1="12.2" y1="19.8" x2="10.4" y2="21.6" stroke-width="0.9"/>`),
+  law:     _ca(`<line x1="16" y1="6" x2="16" y2="27" stroke-width="1.5"/><line x1="10" y1="9" x2="22" y2="9" stroke-width="1.3"/><path d="M8 16C8 16 8 21 13 21C18 21 18 16 18 16H8Z" stroke-width="1.2"/><path d="M14 16C14 16 14 21 19 21C24 21 24 16 24 16H14Z" stroke-width="1.2"/><line x1="8" y1="16" x2="24" y2="16" stroke-width="1.2"/><line x1="13" y1="27" x2="19" y2="27" stroke-width="1.8"/>`),
+  // ── Civilian ──────────────────────────────────────────────────────
+  column:  _ca(`<rect x="12" y="7" width="8" height="2" rx="0.8" stroke-width="1.3"/><rect x="10.5" y="5.5" width="11" height="1.5" rx="0.8" stroke-width="1.2"/><path d="M13.5 9L13 25H19L18.5 9" stroke-width="1.3"/><line x1="15.3" y1="9" x2="15.3" y2="25" stroke-width="0.8" stroke-dasharray="2 2.5" opacity="0.55"/><line x1="17.3" y1="9" x2="17.3" y2="25" stroke-width="0.8" stroke-dasharray="2 2.5" opacity="0.55"/><rect x="9.5" y="25" width="13" height="2" rx="0.8" stroke-width="1.3"/>`),
+  arch:    _ca(`<path d="M6 26V17C6 11.5 9.8 8 16 8C22.2 8 26 11.5 26 17V26" stroke-width="1.5"/><path d="M11 26V18.5C11 14.5 13 12 16 12C19 12 21 14.5 21 18.5V26" stroke-width="1.2"/><line x1="6" y1="26" x2="26" y2="26" stroke-width="1.5"/><line x1="6" y1="20" x2="11" y2="20" stroke-width="1"/><line x1="21" y1="20" x2="26" y2="20" stroke-width="1"/>`),
+  temple:  _ca(`<line x1="5" y1="27" x2="27" y2="27" stroke-width="1.5"/><line x1="6.5" y1="23" x2="25.5" y2="23" stroke-width="1.3"/><line x1="9" y1="9.5" x2="9" y2="23" stroke-width="1.3"/><line x1="13.5" y1="9.5" x2="13.5" y2="23" stroke-width="1.3"/><line x1="18.5" y1="9.5" x2="18.5" y2="23" stroke-width="1.3"/><line x1="23" y1="9.5" x2="23" y2="23" stroke-width="1.3"/><path d="M6.5 9.5L16 5L25.5 9.5Z" stroke-width="1.3"/><line x1="9" y1="9.5" x2="23" y2="9.5" stroke-width="1.1"/>`),
+  obelisk: _ca(`<path d="M13 26L14.5 9L16 5.5L17.5 9L19 26Z" stroke-width="1.4"/><line x1="14.5" y1="12" x2="17.5" y2="12" stroke-width="0.9"/><line x1="14" y1="16" x2="18" y2="16" stroke-width="0.9"/><line x1="13.5" y1="20" x2="18.5" y2="20" stroke-width="0.9"/><line x1="13" y1="24" x2="19" y2="24" stroke-width="0.9"/><rect x="11" y="26" width="10" height="1.5" rx="0.5" stroke-width="1.2"/>`),
+  palace:  _ca(`<line x1="5" y1="26" x2="27" y2="26" stroke-width="1.5"/><line x1="6.5" y1="21" x2="25.5" y2="21" stroke-width="1.2"/><path d="M9.5 21V14L13.5 12V21" stroke-width="1.2"/><path d="M18.5 21V14L22.5 12V21" stroke-width="1.2"/><rect x="13.5" y="12" width="5" height="9" stroke-width="1.3"/><path d="M7 14L16 7.5L25 14Z" stroke-width="1.3"/><rect x="14.5" y="14" width="3" height="7" stroke-width="1.1"/>`),
+  // ── Commercial ────────────────────────────────────────────────────
+  coins:   _ca(`<ellipse cx="16" cy="23" rx="7" ry="2" stroke-width="1.3"/><path d="M9 23V21M23 23V21" stroke-width="1.2"/><ellipse cx="16" cy="21" rx="7" ry="2" stroke-width="1.3"/><path d="M9 21V19M23 21V19" stroke-width="1.2"/><ellipse cx="16" cy="19" rx="7" ry="2" stroke-width="1.3"/><path d="M9 19V17M23 19V17" stroke-width="1.2"/><ellipse cx="16" cy="17" rx="7" ry="2" stroke-width="1.3"/>`),
+  trade:   _ca(`<path d="M10 17C10 17 8 24 16 24C24 24 22 17 22 17" stroke-width="1.3"/><line x1="16" y1="8" x2="16" y2="24" stroke-width="1.5"/><line x1="8" y1="13" x2="24" y2="13" stroke-width="1.3"/><line x1="12" y1="8" x2="12" y2="13" stroke-width="1"/><line x1="20" y1="8" x2="20" y2="13" stroke-width="1"/><path d="M12 8L16 5.5L20 8" stroke-width="1.3"/><line x1="8" y1="13" x2="8" y2="18" stroke-width="1"/><line x1="24" y1="13" x2="24" y2="18" stroke-width="1"/>`),
+  ship:    _ca(`<path d="M6 20.5C6 20.5 7.5 25.5 16 25.5C24.5 25.5 26 20.5 26 20.5" stroke-width="1.4"/><line x1="6" y1="20.5" x2="26" y2="20.5" stroke-width="1.3"/><line x1="16" y1="20.5" x2="16" y2="8" stroke-width="1.5"/><path d="M16 8L25 17H16Z" stroke-width="1.3" fill="currentColor" opacity="0.3"/><path d="M16 8L7 18.5H16Z" stroke-width="1.2"/>`),
+  // ── Guild ─────────────────────────────────────────────────────────
+  laurel:  _ca(`<line x1="16" y1="8" x2="16" y2="25" stroke-width="1.2" stroke-dasharray="1.5 2.5" opacity="0.4"/><path d="M16 10C14.5 8.5 10.5 9.5 10 12.5C9.5 15.5 12 17.5 15 16" stroke-width="1.3"/><path d="M16 16C14.5 14.5 10 15.5 9.5 18.5C9 21.5 11.5 23 15 22" stroke-width="1.3"/><path d="M16 10C17.5 8.5 21.5 9.5 22 12.5C22.5 15.5 20 17.5 17 16" stroke-width="1.3"/><path d="M16 16C17.5 14.5 22 15.5 22.5 18.5C23 21.5 20.5 23 17 22" stroke-width="1.3"/><path d="M13.5 25C14 23.5 18 23.5 18.5 25" stroke-width="1.3"/>`),
+  wonder_art: _ca(`<line x1="5" y1="27" x2="27" y2="27" stroke-width="1.5"/><path d="M9 27V18L16 8L23 18V27" stroke-width="1.4"/><line x1="11.5" y1="27" x2="11.5" y2="18.5" stroke-width="1.2"/><line x1="20.5" y1="27" x2="20.5" y2="18.5" stroke-width="1.2"/><line x1="11.5" y1="18.5" x2="20.5" y2="18.5" stroke-width="1.2"/><path d="M13.5 14.5L16 9L18.5 14.5" stroke-width="1" opacity="0.8"/>`),
+};
+
+// card ID → CARD_ART key
+const CARD_ART_KEY = {
+  // Brown
+  lumber_yard:'wood',    sawmill:'wood',
+  stone_pit:'stone',     quarry:'stone',
+  clay_pool:'clay',      brickyard:'clay',
+  ore_vein:'ore',        foundry:'ore',
+  timber_yard:'wood',    excavation:'clay',
+  // Grey
+  glassworks:'glass',    glassblower:'glass',
+  press:'papyrus',       drying_room:'papyrus',
+  // Yellow
+  tavern:'coins',        caravansery:'trade',
+  stone_reserve:'trade', clay_reserve:'trade',
+  forum:'trade',         customs_house:'trade',
+  brewery:'coins',       port:'coins',
+  lighthouse:'trade',    arena:'coins',
+  chamber:'coins',
+  // Red
+  guard_tower:'tower',   garrison:'shield',
+  palisade:'shield',     barracks:'shield',
+  walls:'wall',          stables:'crossed_swords',
+  archery_range:'bow',   siege_workshop:'crossed_swords',
+  fortifications:'fortress', arsenal:'crossed_swords',
+  // Green
+  scriptorium:'tablet',  library:'tablet',
+  workshop:'gear',       laboratory:'gear',
+  pharmacist:'mortar',   dispensary:'mortar',
+  apothecary:'compass',  school:'wheel',
+  lodge:'compass',       observatory:'astrolabe',
+  study:'wheel',         university:'tablet',
+  // Blue
+  altar:'column',        baths:'arch',
+  theater:'column',      pawnshop:'arch',
+  workshop_bl:'column',
+  aqueduct:'arch',       temple:'temple',
+  statue:'column',       courthouse:'arch',
+  rostrum:'column',
+  pantheon:'temple',     gardens:'arch',
+  town_hall:'palace',    senate:'column',
+  palace:'palace',       obelisk:'obelisk',
+  // Guilds
+  merchants_guild:'trade',      shipowners_guild:'ship',
+  builders_guild:'wonder_art',  magistrates_guild:'arch',
+  scientists_guild:'gear',      moneylenders_guild:'coins',
+  tacticians_guild:'crossed_swords',
+};
+
+function getCardArt(card) {
+  return CARD_ART[CARD_ART_KEY[card.id]] || '';
+}
+
 // Draft order: P1,P2,P2,P1 then P2,P1,P1,P2
 const DRAFT_ORDER = [1,2,2,1, 2,1,1,2];
 
@@ -337,11 +430,13 @@ function renderPyramid() {
     el.style.cssText = `left:${x}px;top:${y}px;z-index:${maxRow - c.row + 1}`;
     el.dataset.lid = c._lid;
     if (c.faceUp) {
+      const art = getCardArt(c);
       el.innerHTML = `
         <div class="card-top">
           <div class="card-name">${c.nameJP}</div>
           ${c.chainTo ? `<div class="card-chain-dot"></div>` : ''}
         </div>
+        ${art ? `<div class="card-art">${art}</div>` : ''}
         <div class="card-bottom">
           <div class="card-cost-row">${costHTML(c.cost)}</div>
           <div class="card-effect-row">${fxIcons(c.effect)}</div>

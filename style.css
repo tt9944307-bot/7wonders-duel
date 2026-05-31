@@ -658,7 +658,7 @@ body {
   border-radius: 6px;
   border: 1px solid rgba(255,255,255,.15);
   cursor: pointer;
-  display: flex; flex-direction: column; justify-content: space-between;
+  display: flex; flex-direction: column; justify-content: flex-start;
   padding: 4px;
   transition: transform .15s, box-shadow .15s, border-color .15s;
   user-select: none; overflow: hidden;
@@ -702,7 +702,8 @@ body {
   pointer-events: none;
 }
 
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; flex-shrink: 0; }
+.card-bottom { flex-shrink: 0; }
 .card-name {
   font-size: 9px; font-weight: 800;
   color: #ffffff;
@@ -1148,32 +1149,49 @@ body {
 }
 .mp-cta-arrow { width: 10px; height: 16px; flex-shrink: 0; color: rgba(26,14,0,.45); }
 
-/* ── Lobby footer + rules link ── */
-#mp-footer {
-  padding: 8px 18px 18px;
-  border-top: 1px solid rgba(200,160,60,.10);
-  margin-top: 4px;
-}
-.mp-rules-link {
+/* ── Lobby rules button (inside hero text, always visible) ── */
+#btn-lobby-rules {
   background: none;
-  border: 1px solid rgba(200,160,60,.22);
-  border-radius: 10px;
-  color: rgba(200,160,60,.60);
-  font-size: 12px;
-  padding: 8px 20px;
-  cursor: pointer;
+  border: none;
+  color: rgba(200,170,80,.88);
+  font-size: 11.5px;
   font-family: 'Noto Serif JP', serif;
-  letter-spacing: .04em;
-  transition: background .15s, border-color .15s, color .15s;
+  letter-spacing: .08em;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 10px;
+  text-decoration: underline;
+  text-decoration-color: rgba(200,160,60,.40);
+  text-underline-offset: 3px;
+  transition: color .15s, text-decoration-color .15s;
   display: block;
-  width: 100%;
-  text-align: center;
 }
-.mp-rules-link:hover, .mp-rules-link:active {
-  background: rgba(200,160,60,.08);
-  border-color: rgba(200,160,60,.50);
-  color: rgba(220,180,80,.90);
+#btn-lobby-rules:hover, #btn-lobby-rules:active {
+  color: rgba(235,200,95,1);
+  text-decoration-color: rgba(230,195,90,.75);
 }
+
+/* ── Card artwork ── */
+.card-art {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 1px 0;
+  overflow: hidden;
+}
+.card-art-svg {
+  width: calc(var(--cw, 54px) * 0.52);
+  height: calc(var(--cw, 54px) * 0.52);
+  opacity: 0.42;
+  color: #ffffff;
+  overflow: visible;
+}
+.game-card.red    .card-art-svg { opacity: 0.50; }
+.game-card.green  .card-art-svg { opacity: 0.46; }
+.game-card.purple .card-art-svg { opacity: 0.50; }
+.game-card.yellow .card-art-svg { opacity: 0.38; }
 
 /* ── 2-player secondary section ── */
 #mp-modes {
