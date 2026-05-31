@@ -4,8 +4,8 @@
       <stop offset="0%"   stop-color="#3a2608" stop-opacity="1"/>
       <stop offset="100%" stop-color="#0a0806" stop-opacity="1"/>
     </radialGradient>
-    <radialGradient id="glow7" cx="50%" cy="45%" r="55%">
-      <stop offset="0%"   stop-color="#e0b428" stop-opacity=".28"/>
+    <radialGradient id="glow7" cx="50%" cy="40%" r="50%">
+      <stop offset="0%"   stop-color="#e0b428" stop-opacity=".26"/>
       <stop offset="100%" stop-color="#e0b428" stop-opacity="0"/>
     </radialGradient>
     <filter id="f7" x="-30%" y="-30%" width="160%" height="160%">
@@ -18,10 +18,9 @@
     </linearGradient>
   </defs>
 
-  <!-- Background -->
-  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
-  <!-- Glow behind "7" -->
-  <rect width="512" height="512" rx="96" fill="url(#glow7)"/>
+  <!-- Background: rx=80 (less aggressive — prevents corner clipping) -->
+  <rect width="512" height="512" rx="80" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="80" fill="url(#glow7)"/>
 
   <!-- Subtle star dots -->
   <circle cx="72"  cy="72"  r="2.5" fill="#e8c040" opacity=".55"/>
@@ -31,7 +30,7 @@
   <circle cx="130" cy="44"  r="1.5" fill="#e8c040" opacity=".32"/>
   <circle cx="380" cy="52"  r="2"   fill="#e8c040" opacity=".38"/>
 
-  <!-- ── "7" — giant, bold, golden ── -->
+  <!-- "7" — giant, bold, golden -->
   <g filter="url(#f7)">
     <text
       x="258" y="295"
@@ -42,40 +41,38 @@
       dominant-baseline="alphabetic">7</text>
   </g>
 
-  <!-- ── 5-card colour strip at bottom ── -->
-  <!-- Card height: 72, width: each fills 1/5 of 512 minus gaps -->
-  <!-- Total gap: 4 gaps × 6px = 24px, each card = (512-24)/5 = 97.6 → 97px, adjusted -->
-  <!-- Actually: 5 cards × 96px + 4 gaps × 8px = 480 + 32 = 512 → x start = 0 -->
+  <!-- 5-card strip: y=406, height=74; x=24..488 (5×88 + 4×6 = 464px) -->
+  <!-- At y=480 with rx=80: safe range [16,496] — cards [24,488] safely inside -->
 
-  <!-- Card 1: orange-brown -->
-  <rect x="4"   y="414" width="93" height="80" rx="10" fill="#c86830"/>
-  <rect x="4"   y="414" width="93" height="22" rx="10" fill="url(#stripe)"/>
-  <rect x="4"   y="414" width="93" height="80" rx="10" fill="none" stroke="rgba(255,200,130,.45)" stroke-width="2"/>
+  <!-- Card 1: orange-brown, x=24 -->
+  <rect x="24"  y="406" width="88" height="74" rx="10" fill="#c86830"/>
+  <rect x="24"  y="406" width="88" height="22" rx="10" fill="url(#stripe)"/>
+  <rect x="24"  y="406" width="88" height="74" rx="10" fill="none" stroke="rgba(255,200,130,.45)" stroke-width="2"/>
 
-  <!-- Card 2: blue -->
-  <rect x="105" y="414" width="93" height="80" rx="10" fill="#1e6ab8"/>
-  <rect x="105" y="414" width="93" height="22" rx="10" fill="url(#stripe)"/>
-  <rect x="105" y="414" width="93" height="80" rx="10" fill="none" stroke="rgba(100,190,255,.45)" stroke-width="2"/>
+  <!-- Card 2: blue, x=118 (24+88+6) -->
+  <rect x="118" y="406" width="88" height="74" rx="10" fill="#1e6ab8"/>
+  <rect x="118" y="406" width="88" height="22" rx="10" fill="url(#stripe)"/>
+  <rect x="118" y="406" width="88" height="74" rx="10" fill="none" stroke="rgba(100,190,255,.45)" stroke-width="2"/>
 
-  <!-- Card 3: green -->
-  <rect x="206" y="414" width="100" height="80" rx="10" fill="#1a9048"/>
-  <rect x="206" y="414" width="100" height="22" rx="10" fill="url(#stripe)"/>
-  <rect x="206" y="414" width="100" height="80" rx="10" fill="none" stroke="rgba(80,230,140,.45)" stroke-width="2"/>
+  <!-- Card 3: green, x=212 -->
+  <rect x="212" y="406" width="88" height="74" rx="10" fill="#1a9048"/>
+  <rect x="212" y="406" width="88" height="22" rx="10" fill="url(#stripe)"/>
+  <rect x="212" y="406" width="88" height="74" rx="10" fill="none" stroke="rgba(80,230,140,.45)" stroke-width="2"/>
 
-  <!-- Card 4: red -->
-  <rect x="314" y="414" width="93" height="80" rx="10" fill="#c02222"/>
-  <rect x="314" y="414" width="93" height="22" rx="10" fill="url(#stripe)"/>
-  <rect x="314" y="414" width="93" height="80" rx="10" fill="none" stroke="rgba(255,110,110,.45)" stroke-width="2"/>
+  <!-- Card 4: red, x=306 -->
+  <rect x="306" y="406" width="88" height="74" rx="10" fill="#c02222"/>
+  <rect x="306" y="406" width="88" height="22" rx="10" fill="url(#stripe)"/>
+  <rect x="306" y="406" width="88" height="74" rx="10" fill="none" stroke="rgba(255,110,110,.45)" stroke-width="2"/>
 
-  <!-- Card 5: purple -->
-  <rect x="415" y="414" width="93" height="80" rx="10" fill="#7828c0"/>
-  <rect x="415" y="414" width="93" height="22" rx="10" fill="url(#stripe)"/>
-  <rect x="415" y="414" width="93" height="80" rx="10" fill="none" stroke="rgba(200,120,255,.45)" stroke-width="2"/>
+  <!-- Card 5: purple, x=400 -->
+  <rect x="400" y="406" width="88" height="74" rx="10" fill="#7828c0"/>
+  <rect x="400" y="406" width="88" height="22" rx="10" fill="url(#stripe)"/>
+  <rect x="400" y="406" width="88" height="74" rx="10" fill="none" stroke="rgba(200,120,255,.45)" stroke-width="2"/>
 
-  <!-- Gold separator line above cards -->
-  <rect x="4" y="408" width="504" height="3" rx="1.5" fill="#e8c040" opacity=".55"/>
+  <!-- Gold separator -->
+  <rect x="24" y="400" width="464" height="3" rx="1.5" fill="#e8c040" opacity=".55"/>
 
   <!-- Border -->
-  <rect x="3" y="3" width="506" height="506" rx="94"
+  <rect x="3" y="3" width="506" height="506" rx="78"
         fill="none" stroke="rgba(220,170,40,.35)" stroke-width="3.5"/>
 </svg>

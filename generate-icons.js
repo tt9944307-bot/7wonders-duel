@@ -124,7 +124,7 @@ function drawIcon(SIZE) {
 
   // ── Background gradient (dark warm stone) ──
   // Fill with darkest colour first, then add radial warm centre
-  fillRounded(0, 0, SIZE, SIZE, s(96), 10, 8, 6);
+  fillRounded(0, 0, SIZE, SIZE, s(80), 10, 8, 6);
   radialGlow(SIZE/2, SIZE*0.50, SIZE*0.65, 70, 42, 8, 180);  // warm amber centre
   radialGlow(SIZE/2, SIZE*0.25, SIZE*0.45, 20, 14, 4, 100);  // slight top glow
 
@@ -136,30 +136,35 @@ function drawIcon(SIZE) {
   const n7x = s(108), n7y = s(38), n7w = s(296), n7h = s(340), n7t = s(52);
   draw7(n7x, n7y, n7w, n7h, n7t, 232, 190, 44);
 
-  // ── Gold separator line ──
-  fillRect(s(4), s(406), SIZE-s(8), s(4), 232, 190, 44, 200);
+  // ── Gold separator line (side margin keeps it away from corners) ──
+  fillRect(s(24), s(398), SIZE-s(48), s(4), 232, 190, 44, 200);
 
-  // ── 5 coloured card strip ──
-  const cardY = s(416), cardH = s(80), cardR = s(10);
-  const cards = [
-    { x: s(4),   w: s(93), r: 200, g: 104, b:  48 },  // orange-brown
-    { x: s(105), w: s(93), r:  30, g: 106, b: 184 },  // blue
-    { x: s(206), w: s(100),r:  26, g: 144, b:  72 },  // green
-    { x: s(314), w: s(93), r: 192, g:  34, b:  34 },  // red
-    { x: s(415), w: s(93), r: 120, g:  40, b: 192 },  // purple
+  // ── 5-card strip ──
+  // y=406..480 (74px tall), x=24..488 (464px wide)
+  // 5 cards × 88px + 4 gaps × 6px = 464px
+  // At y=480, rx=80 safe range: [16, 496] — cards [24,488] safely inside ✓
+  const cardY = s(406), cardH = s(74), cardR = s(10);
+  const cStart = s(24), cW = s(88), cGap = s(6);
+  const cardDefs = [
+    [200, 104,  48],  // orange-brown
+    [ 30, 106, 184],  // blue
+    [ 26, 144,  72],  // green
+    [192,  34,  34],  // red
+    [120,  40, 192],  // purple
   ];
-  cards.forEach(({ x, w, r, g, b }) => {
-    fillRounded(x, cardY, w, cardH, cardR, r, g, b);
+  cardDefs.forEach(([r, g, b], i) => {
+    const x = cStart + i * (cW + cGap);
+    fillRounded(x, cardY, cW, cardH, cardR, r, g, b);
     // top highlight
-    fillRounded(x, cardY, w, s(22), cardR, 255, 255, 255, 55);
+    fillRounded(x, cardY, cW, s(20), cardR, 255, 255, 255, 55);
     // border
-    for (let d=0;d<2;d++)
-      fillRounded(x+d, cardY+d, w-d*2, cardH-d*2, cardR, 255, 255, 255, 40);
+    for (let d = 0; d < 2; d++)
+      fillRounded(x+d, cardY+d, cW-d*2, cardH-d*2, cardR, 255, 255, 255, 35);
   });
 
   // ── Outer border ──
   for (let d=2;d<=5;d++)
-    fillRounded(d, d, SIZE-d*2, SIZE-d*2, s(96)-d, 220, 168, 40, 28);
+    fillRounded(d, d, SIZE-d*2, SIZE-d*2, s(80)-d, 220, 168, 40, 28);
 
   return c.toPNG();
 }
