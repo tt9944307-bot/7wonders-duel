@@ -416,6 +416,15 @@ function renderResources(n) {
   });
 }
 
+function reviewBoard() {
+  document.getElementById('victory-overlay').classList.add('hidden');
+  document.getElementById('btn-restore-result').classList.add('visible');
+}
+function restoreResult() {
+  document.getElementById('victory-overlay').classList.remove('hidden');
+  document.getElementById('btn-restore-result').classList.remove('visible');
+}
+
 function openStatsHelp() {
   document.getElementById('stats-help-modal').classList.add('sh-open');
 }
@@ -440,7 +449,7 @@ function renderPlayerTokens(n) {
   p.progressTokens.forEach(t => {
     const chip = document.createElement('div');
     chip.className = 'player-token-chip';
-    chip.textContent = TOKEN_ICON[t.id] || t.nameJP[0];
+    chip.innerHTML = TOKEN_ICON[t.id] || t.nameJP[0];
     chip.title = t.nameJP;
     chip.addEventListener('mouseenter', () => tipShow(chip, tokenTipHTML(t)));
     bar.appendChild(chip);

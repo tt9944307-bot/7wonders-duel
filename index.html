@@ -87,10 +87,10 @@
       <div class="pz-top">
         <div class="player-name p2-name">Player 2</div>
         <div id="p2-wonders" class="wonder-row"></div>
-        <div class="player-coins">
+        <div class="player-coins sh-tap" onclick="openStatsHelp()">
           <svg class="coin-svg" viewBox="0 0 13 13" width="13" height="13"><circle cx="6.5" cy="6.5" r="5.5" stroke="#c8a020" stroke-width="1.4" fill="#3a2c00"/><circle cx="6.5" cy="6.5" r="3" stroke="#d4b030" stroke-width="1" fill="none"/></svg><span id="p2-coins">7</span>
         </div>
-        <div class="player-vp">
+        <div class="player-vp sh-tap" onclick="openStatsHelp()">
           <span class="vp-icon">★</span><span id="p2-vp">0</span> VP
         </div>
         <div id="p2-res-bar" class="res-bar">
@@ -154,10 +154,10 @@
           <span class="res-chip rc-glass"  ><span class="rc-label">硝</span><span class="rc-count" id="p1-res-glass">0</span></span>
           <span class="res-chip rc-papyrus"><span class="rc-label">紙</span><span class="rc-count" id="p1-res-papyrus">0</span></span>
         </div>
-        <div class="player-vp">
+        <div class="player-vp sh-tap" onclick="openStatsHelp()">
           <span class="vp-icon">★</span><span id="p1-vp">0</span> VP
         </div>
-        <div class="player-coins">
+        <div class="player-coins sh-tap" onclick="openStatsHelp()">
           <svg class="coin-svg" viewBox="0 0 13 13" width="13" height="13"><circle cx="6.5" cy="6.5" r="5.5" stroke="#c8a020" stroke-width="1.4" fill="#3a2c00"/><circle cx="6.5" cy="6.5" r="3" stroke="#d4b030" stroke-width="1" fill="none"/></svg><span id="p1-coins">7</span>
         </div>
         <div id="p1-wonders" class="wonder-row"></div>
@@ -280,9 +280,12 @@
     <div id="victory-title"></div>
     <div id="victory-reason"></div>
     <div id="victory-scores"></div>
+    <button id="btn-review-board" class="mbutton cancel" onclick="reviewBoard()">📋 盤面を確認する</button>
     <button id="btn-play-again">もう一度プレイ</button>
   </div>
 </div>
+<!-- Floating "back to result" button (shown when reviewing board) -->
+<button id="btn-restore-result" onclick="restoreResult()">🏆 結果に戻る</button>
 
 <!-- Rules Modal -->
 <div id="rules-overlay" class="overlay hidden">

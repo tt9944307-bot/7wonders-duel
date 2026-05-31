@@ -372,6 +372,33 @@ body {
 }
 .sh-note strong { color: rgba(220,185,90,.85); }
 
+/* Tappable stats chips */
+.sh-tap { cursor: pointer; }
+.sh-tap:active { filter: brightness(1.25); }
+
+/* Floating "back to result" button */
+#btn-restore-result {
+  display: none;
+  position: fixed;
+  bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 1500;
+  background: linear-gradient(135deg, #c8a020, #a07010);
+  color: #1a0e00;
+  border: none; border-radius: 20px;
+  padding: 10px 22px;
+  font-size: 13px; font-weight: 800;
+  cursor: pointer; white-space: nowrap;
+  box-shadow: 0 3px 16px rgba(0,0,0,.55);
+  font-family: 'Noto Serif JP', serif;
+}
+#btn-restore-result.visible { display: block; }
+
+/* Review board button in victory modal */
+#btn-review-board {
+  width: 100%; margin-bottom: 8px;
+}
+
 /* ── Wonder Rows ───────────────────────────────────── */
 .wonder-row {
   display: flex;
