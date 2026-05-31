@@ -276,6 +276,100 @@ body {
 .coin-icon { font-size: 13px; }
 .vp-icon   { font-size: 12px; color: #c8c8ff; }
 
+/* ── Resource bar ──────────────────────────────────── */
+.res-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: rgba(0,0,0,.28);
+  border-top: 1px solid rgba(200,160,60,.10);
+  flex-wrap: wrap;
+}
+.stats-help-btn {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: rgba(120,90,20,.55);
+  border: 1px solid rgba(200,160,60,.45);
+  color: rgba(210,175,80,.90);
+  font-size: 10px; font-weight: 900;
+  cursor: pointer; padding: 0;
+  line-height: 18px; text-align: center;
+  flex-shrink: 0; transition: background .15s;
+}
+.stats-help-btn:hover { background: rgba(160,115,25,.80); }
+.res-chip {
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 2px 5px; border-radius: 4px;
+  font-size: 10px; line-height: 1;
+}
+.rc-label { opacity: .72; font-weight: 500; font-size: 9px; }
+.rc-count { font-weight: 800; min-width: 9px; text-align: right; }
+.rc-wood    { background:rgba(100,60,14,.65); color:#d4a060; border:1px solid rgba(180,120,40,.35); }
+.rc-stone   { background:rgba(85,85,85,.55);  color:#c0c0b8; border:1px solid rgba(160,160,150,.30); }
+.rc-clay    { background:rgba(140,55,18,.60); color:#e09060; border:1px solid rgba(200,95,45,.35); }
+.rc-ore     { background:rgba(55,60,80,.65);  color:#a0b4c8; border:1px solid rgba(120,145,170,.35); }
+.rc-glass   { background:rgba(18,75,140,.60); color:#80c4f4; border:1px solid rgba(55,140,225,.35); }
+.rc-papyrus { background:rgba(95,88,18,.60);  color:#d4cc40; border:1px solid rgba(180,165,35,.35); }
+.res-chip.rc-zero { opacity:.30; }
+
+/* ── Stats help bottom-sheet ───────────────────────── */
+.sh-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.62); z-index: 2100;
+  align-items: flex-end; justify-content: center;
+}
+.sh-overlay.sh-open { display: flex; }
+.sh-panel {
+  background: linear-gradient(180deg, #1e1810 0%, #130f09 100%);
+  border: 1px solid rgba(200,160,60,.28);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  padding: 16px 16px 28px;
+  width: 100%; max-width: 480px;
+  max-height: 82vh; overflow-y: auto;
+  position: relative;
+  box-shadow: 0 -8px 40px rgba(0,0,0,.60);
+}
+.sh-close {
+  position: absolute; top: 12px; right: 14px;
+  background: none; border: none;
+  color: rgba(200,160,60,.55);
+  font-size: 18px; cursor: pointer; padding: 2px 4px;
+}
+.sh-close:hover { color: rgba(200,160,60,.90); }
+.sh-title {
+  font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: .08em;
+  color: #e8c040; margin-bottom: 12px; padding-right: 22px;
+}
+.sh-stat {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 8px 0; border-bottom: 1px solid rgba(200,160,60,.08);
+}
+.sh-stat:last-of-type { border-bottom: none; }
+.sh-stat-icon { font-size: 18px; width: 26px; text-align: center; flex-shrink:0; padding-top:1px; }
+.sh-stat-name { font-size: 12px; font-weight: 700; color: rgba(230,200,130,.95); margin-bottom: 3px; }
+.sh-stat-desc { font-size: 11px; color: rgba(180,160,130,.75); line-height: 1.55; }
+.sh-divider {
+  font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+  color: rgba(200,160,60,.72); margin: 10px 0 6px;
+  border-bottom: 1px solid rgba(200,160,60,.18); padding-bottom: 4px;
+}
+.sh-res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+.sh-res-row { display: flex; align-items: flex-start; gap: 6px; }
+.sh-res-chip {
+  font-size: 10px; font-weight: 800; padding: 2px 7px;
+  border-radius: 4px; white-space: nowrap; flex-shrink: 0; line-height: 1.4;
+}
+.sh-res-info { font-size: 10.5px; color: rgba(178,158,128,.72); line-height: 1.42; }
+.sh-note {
+  font-size: 10.5px; color: rgba(150,140,120,.70);
+  margin-top: 12px; padding: 8px 10px;
+  background: rgba(200,160,60,.06); border-radius: 6px;
+  border-left: 2px solid rgba(200,160,60,.28); line-height: 1.55;
+}
+.sh-note strong { color: rgba(220,185,90,.85); }
+
 /* ── Wonder Rows ───────────────────────────────────── */
 .wonder-row {
   display: flex;

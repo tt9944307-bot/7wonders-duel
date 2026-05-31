@@ -401,6 +401,28 @@ function renderZone(n) {
   renderTableau(n);
   renderWonders(n);
   renderPlayerTokens(n);
+  renderResources(n);
+}
+
+function renderResources(n) {
+  if (!G.players) return;
+  const { fixed } = getRes(n);
+  ['wood','stone','clay','ore','glass','papyrus'].forEach(r => {
+    const el = document.getElementById(`p${n}-res-${r}`);
+    if (!el) return;
+    const v = fixed[r] || 0;
+    el.textContent = v;
+    el.closest('.res-chip').classList.toggle('rc-zero', v === 0);
+  });
+}
+
+function openStatsHelp() {
+  document.getElementById('stats-help-modal').classList.add('sh-open');
+}
+function closeStatsHelp(e) {
+  // Close on overlay click or explicit call
+  if (e && e.target !== document.getElementById('stats-help-modal')) return;
+  document.getElementById('stats-help-modal').classList.remove('sh-open');
 }
 
 function renderPlayerTokens(n) {

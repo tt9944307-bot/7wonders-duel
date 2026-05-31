@@ -94,6 +94,15 @@
           <span class="vp-icon">★</span><span id="p2-vp">0</span> VP
         </div>
       </div>
+      <div id="p2-res-bar" class="res-bar">
+        <button class="stats-help-btn" onclick="openStatsHelp()" title="ステータス解説">？</button>
+        <span class="res-chip rc-wood"   ><span class="rc-label">木</span><span class="rc-count" id="p2-res-wood">0</span></span>
+        <span class="res-chip rc-stone"  ><span class="rc-label">石</span><span class="rc-count" id="p2-res-stone">0</span></span>
+        <span class="res-chip rc-clay"   ><span class="rc-label">土</span><span class="rc-count" id="p2-res-clay">0</span></span>
+        <span class="res-chip rc-ore"    ><span class="rc-label">鉄</span><span class="rc-count" id="p2-res-ore">0</span></span>
+        <span class="res-chip rc-glass"  ><span class="rc-label">硝</span><span class="rc-count" id="p2-res-glass">0</span></span>
+        <span class="res-chip rc-papyrus"><span class="rc-label">紙</span><span class="rc-count" id="p2-res-papyrus">0</span></span>
+      </div>
       <div id="p2-tableau" class="tableau">
         <div class="tab-col" id="p2-brown"  data-color="brown"></div>
         <div class="tab-col" id="p2-grey"   data-color="grey"></div>
@@ -135,6 +144,15 @@
         <div class="tab-col" id="p1-green"  data-color="green"></div>
         <div class="tab-col" id="p1-blue"   data-color="blue"></div>
       </div>
+      <div id="p1-res-bar" class="res-bar">
+        <button class="stats-help-btn" onclick="openStatsHelp()" title="ステータス解説">？</button>
+        <span class="res-chip rc-wood"   ><span class="rc-label">木</span><span class="rc-count" id="p1-res-wood">0</span></span>
+        <span class="res-chip rc-stone"  ><span class="rc-label">石</span><span class="rc-count" id="p1-res-stone">0</span></span>
+        <span class="res-chip rc-clay"   ><span class="rc-label">土</span><span class="rc-count" id="p1-res-clay">0</span></span>
+        <span class="res-chip rc-ore"    ><span class="rc-label">鉄</span><span class="rc-count" id="p1-res-ore">0</span></span>
+        <span class="res-chip rc-glass"  ><span class="rc-label">硝</span><span class="rc-count" id="p1-res-glass">0</span></span>
+        <span class="res-chip rc-papyrus"><span class="rc-label">紙</span><span class="rc-count" id="p1-res-papyrus">0</span></span>
+      </div>
       <div class="pz-top">
         <div class="player-vp">
           <span class="vp-icon">★</span><span id="p1-vp">0</span> VP
@@ -154,6 +172,62 @@
     <div class="log-title">ゲームログ</div>
     <ul id="log-list"></ul>
   </aside>
+
+<!-- ── Stats Help Modal ──────────────────────────── -->
+<div id="stats-help-modal" class="sh-overlay" onclick="closeStatsHelp(event)">
+  <div class="sh-panel">
+    <button class="sh-close" onclick="closeStatsHelp()">✕</button>
+    <div class="sh-title">ステータス解説</div>
+
+    <div class="sh-stat">
+      <div class="sh-stat-icon">💰</div>
+      <div>
+        <div class="sh-stat-name">コイン</div>
+        <div class="sh-stat-desc">カード建設・取引に使う通貨。初期7枚。足りない資源は「取引（相手の同資源数＋2コイン）」で補える。カードを捨てると3コイン＋追加ボーナス。</div>
+      </div>
+    </div>
+
+    <div class="sh-stat">
+      <div class="sh-stat-icon">★</div>
+      <div>
+        <div class="sh-stat-name">VP（勝利点）</div>
+        <div class="sh-stat-desc">ゲーム終了時に合計する得点。青カード・ワンダー・プログレストークン・コイン3枚につき1点 などで増える。最終VPが多い方が通常勝利。</div>
+      </div>
+    </div>
+
+    <div class="sh-divider">📦 資源（茶・灰カードで生産）</div>
+    <div class="sh-res-grid">
+      <div class="sh-res-row">
+        <span class="sh-res-chip rc-wood">木</span>
+        <span class="sh-res-info">木材。建物・ワンダーの建設コストに使用。（茶カード）</span>
+      </div>
+      <div class="sh-res-row">
+        <span class="sh-res-chip rc-stone">石</span>
+        <span class="sh-res-info">石材。水道橋・城壁など重量建築に。（茶カード）</span>
+      </div>
+      <div class="sh-res-row">
+        <span class="sh-res-chip rc-clay">土</span>
+        <span class="sh-res-info">粘土。第2・3時代のカードに多用。（茶カード）</span>
+      </div>
+      <div class="sh-res-row">
+        <span class="sh-res-chip rc-ore">鉄</span>
+        <span class="sh-res-info">鉄鉱石。軍事・科学系カードに多い。（茶カード）</span>
+      </div>
+      <div class="sh-res-row">
+        <span class="sh-res-chip rc-glass">硝</span>
+        <span class="sh-res-info">ガラス（製造資源）。第3時代で多用。（灰カード）</span>
+      </div>
+      <div class="sh-res-row">
+        <span class="sh-res-chip rc-papyrus">紙</span>
+        <span class="sh-res-info">パピルス（製造資源）。科学・文明カードに必要。（灰カード）</span>
+      </div>
+    </div>
+
+    <div class="sh-note">
+      💡 <strong>取引</strong>：持っていない資源は「相手の同資源保有数＋2コイン」で購入できます。黄色カードで取引コストを固定1コインにできます。
+    </div>
+  </div>
+</div>
 
 </div><!-- /#game-container -->
 
